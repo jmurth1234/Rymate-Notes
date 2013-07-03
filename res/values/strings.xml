@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" >Rymate Notes
+    </string>
+    <string name="title_note_detail" >Note Detail
+    </string>
+    <string name="no_notes" >No notes here yet.
+    </string>
+    <string name="title">Note Title</string>
+    <string name="body">Note Content</string>
+    <string name="confirm">Make Note</string>
+    <string name="menu_insert">Add Note</string>
+    <string name="menu_delete">Delete Note</string>
+    <string name="edit_note">Edit Note</string>
+</resources>
