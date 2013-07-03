@@ -1,9 +1,11 @@
 package net.rymate.notes;
 
 import android.app.ListActivity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -20,16 +22,18 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 
 public class RymateNotes extends ListActivity {
-    private static final int ACTIVITY_CREATE=0;
-    private static final int ACTIVITY_EDIT=1;
-    private static final int ACTIVITY_VIEW=2;
+    private static final int ACTIVITY_CREATE = 0;
+    private static final int ACTIVITY_EDIT = 1;
+    private static final int ACTIVITY_VIEW = 2;
 
     private static final int EDIT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
 
     private NotesDbAdapter mDbHelper;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Create a progress bar to display while the list loads
@@ -52,8 +56,8 @@ public class RymateNotes extends ListActivity {
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};
 
         // Now create a simple cursor adapter and set it to display
-        SimpleCursorAdapter notes = 
-            new SimpleCursorAdapter(this, R.layout.notes_row, notesCursor, from, to);
+        SimpleCursorAdapter notes =
+                new SimpleCursorAdapter(this, R.layout.notes_row, notesCursor, from, to);
         setListAdapter(notes);
     }
 
@@ -66,7 +70,7 @@ public class RymateNotes extends ListActivity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.new_note:
                 createNote();
                 return true;
@@ -77,7 +81,7 @@ public class RymateNotes extends ListActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
-            ContextMenuInfo menuInfo) {
+                                    ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, EDIT_ID, 0, R.string.edit_note);
         menu.add(1, DELETE_ID, 1, R.string.menu_delete);
@@ -86,7 +90,7 @@ public class RymateNotes extends ListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case DELETE_ID:
                 mDbHelper.deleteNote(info.id);
                 fillData();
