@@ -18,6 +18,7 @@
                 android:id="@+id/viewNote"
                 android:autoText="false"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                android:text="This is sample text"/>
+                android:text="This is sample text"
+                android:typeface="sans"/>
     </ScrollView>
 </LinearLayout>

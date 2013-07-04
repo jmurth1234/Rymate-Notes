@@ -13,4 +13,7 @@
     <string name="menu_insert">Add Note</string>
     <string name="menu_delete">Delete Note</string>
     <string name="edit_note">Edit Note</string>
+    <string name="note_saved">Your note was saved!</string>
+    <string name="note_failed">Uh oh, something went wrong with saving your note. Report this!
+    </string>
 </resources>

@@ -1,6 +1,7 @@
 package net.rymate.notes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class NoteEdit extends Activity {
 
@@ -34,14 +36,14 @@ public class NoteEdit extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mRowId = (savedInstanceState == null) ? null :
-            (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
-		if (mRowId == null) {
-			Bundle extras = getIntent().getExtras();
-			mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
-									: null;
-		}
+                (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
+        if (mRowId == null) {
+            Bundle extras = getIntent().getExtras();
+            mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
+                    : null;
+        }
 
-		populateFields();
+        populateFields();
 
     }
 
@@ -101,15 +103,33 @@ public class NoteEdit extends Activity {
     private void saveState() {
         String title = mTitleText.getText().toString();
         String body = mBodyText.getText().toString();
+        boolean saved;
 
         if (mRowId == null) {
             long id = mDbHelper.createNote(title, body);
             if (id > 0) {
                 mRowId = id;
+                saved = true;
+            } else {
+                saved = false;
             }
         } else {
-            mDbHelper.updateNote(mRowId, title, body);
+            saved = mDbHelper.updateNote(mRowId, title, body);
         }
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        int durationFailed = Toast.LENGTH_LONG;
+
+        if (saved) {
+            Toast toast = Toast.makeText(context, R.string.note_saved, duration);
+            toast.show();
+        } else {
+            Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
+            toast.show();
+
+        }
+
     }
 
 }
