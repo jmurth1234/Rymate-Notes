@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+
+import net.rymate.notes.database.NotesDbAdapter;
 
 /**
  * Created by Ryan on 03/07/13.
@@ -27,9 +25,9 @@ public class NoteView extends Activity {
         mDbHelper = new NotesDbAdapter(this);
         mDbHelper.open();
 
-        setContentView(R.layout.note_view);
+        setContentView(R.layout.fragment_note_view);
 
-        mBodyText = (TextView) findViewById(R.id.viewNote);
+        //mBodyText = (TextView) findViewById(R.id.viewNote);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -9,10 +9,10 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import net.rymate.notes.database.NotesDbAdapter;
 
 public class NoteEdit extends Activity {
 

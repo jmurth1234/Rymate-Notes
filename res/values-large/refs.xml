@@ -1,0 +1,7 @@
+<resources>
+    <!--
+    Layout alias to replace the single-pane version of the layout with a
+    two-pane version on Large screens. Do not confuse two pain with T Pain.
+    -->
+    <item type="layout" name="fragment_notes_list">@layout/activity_notes_twopane</item>
+</resources>

@@ -16,4 +16,7 @@
     <string name="note_saved">Your note was saved!</string>
     <string name="note_failed">Uh oh, something went wrong with saving your note. Report this!
     </string>
+    <string name="dialog_delete">Are you sure you want to delete this note?</string>
+    <string name="dialog_confirm">Yes</string>
+    <string name="dialog_cancel">No</string>
 </resources>

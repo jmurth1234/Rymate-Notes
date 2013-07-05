@@ -1,24 +1,24 @@
 package net.rymate.notes;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
+
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import net.rymate.notes.database.NotesDbAdapter;
 
 
 public class RymateNotes extends ListActivity {
@@ -30,22 +30,25 @@ public class RymateNotes extends ListActivity {
     private static final int DELETE_ID = Menu.FIRST + 1;
 
     private NotesDbAdapter mDbHelper;
+    private int mStackLevel;
+
+    FragmentManager fragmentManager;
 
     /**
      * Called when the activity is first created.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // Create a progress bar to display while the list loads
+        FragmentManager fragmentManager = getFragmentManager();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.notes_list);
+        setContentView(R.layout.fragment_notes_list);
         mDbHelper = new NotesDbAdapter(this);
         mDbHelper.open();
         fillData();
         registerForContextMenu(getListView());
     }
 
-    private void fillData() {
+    public void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
         startManagingCursor(notesCursor);
 
@@ -92,8 +95,7 @@ public class RymateNotes extends ListActivity {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case DELETE_ID:
-                mDbHelper.deleteNote(info.id);
-                fillData();
+                showDeleteDialog((int)info.id);
                 return true;
             case EDIT_ID:
                 Intent i = new Intent(this, NoteEdit.class);
@@ -121,5 +123,23 @@ public class RymateNotes extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         fillData();
+    }
+
+    public void showDeleteDialog(int noteId) {
+        mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        // DialogFragment newFragment = DeleteNoteDialogFragment.newInstance(mStackLevel, noteId, mDbHelper);
+        // newFragment.show(ft, "dialog");
     }
 }
