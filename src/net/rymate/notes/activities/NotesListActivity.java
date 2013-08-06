@@ -40,7 +40,6 @@ public class NotesListActivity extends FragmentActivity
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-            debugToast("It's working!");
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
@@ -62,7 +61,6 @@ public class NotesListActivity extends FragmentActivity
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            debugToast("Tablet UI ON");
             Bundle arguments = new Bundle();
             arguments.putLong(NotesDbAdapter.KEY_ROWID, RowID);
             NoteViewFragment fragment = new NoteViewFragment();
@@ -75,7 +73,6 @@ public class NotesListActivity extends FragmentActivity
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
-            debugToast("Tablet UI OFF");
             Intent detailIntent = new Intent(this, NoteViewActivity.class);
             detailIntent.putExtra(NotesDbAdapter.KEY_ROWID, RowID);
             startActivity(detailIntent);
@@ -103,16 +100,6 @@ public class NotesListActivity extends FragmentActivity
     private void createNote() {
         Intent i = new Intent(this, NoteEdit.class);
         startActivityForResult(i, 0);
-    }
-
-
-    public void debugToast(String s) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, s, duration);
-        toast.show();
-
     }
 
     public Long getID() {

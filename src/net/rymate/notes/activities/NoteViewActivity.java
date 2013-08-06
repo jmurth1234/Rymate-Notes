@@ -46,7 +46,6 @@ public class NoteViewActivity extends FragmentActivity {
                         : null;
             }
 
-            debugToast("Row ID is: " + mRowId);
             Bundle arguments = new Bundle();
             arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
             NoteViewFragment fragment = new NoteViewFragment();
@@ -72,14 +71,5 @@ public class NoteViewActivity extends FragmentActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void debugToast(String s) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, s, duration);
-            toast.show();
-
     }
 }
