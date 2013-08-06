@@ -28,6 +28,7 @@ public class NotesListActivity extends FragmentActivity
      */
     private boolean mTwoPane;
     private Long mRowId;
+    private boolean selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,9 @@ public class NotesListActivity extends FragmentActivity
                     .replace(R.id.note_view_container, fragment)
                     .commit();
 
+            selected = true;
+            invalidateOptionsMenu();
+
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
@@ -83,6 +87,16 @@ public class NotesListActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (selected) {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.noteview_menu_tablet, menu);
+        }
         return true;
     }
 
