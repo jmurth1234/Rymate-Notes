@@ -39,7 +39,6 @@
             android:layout_alignStart="@android:id/text1"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:singleLine="true"
-            android:textColor="@android:color/darker_gray"
             android:textStyle="italic"/>
 
 
