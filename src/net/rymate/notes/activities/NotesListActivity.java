@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import net.rymate.notes.NoteEdit;
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.fragments.NoteViewFragment;
@@ -23,6 +27,7 @@ public class NotesListActivity extends FragmentActivity
      * device.
      */
     private boolean mTwoPane;
+    private Long mRowId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,7 @@ public class NotesListActivity extends FragmentActivity
             arguments.putLong(NotesDbAdapter.KEY_ROWID, RowID);
             NoteViewFragment fragment = new NoteViewFragment();
             fragment.setArguments(arguments);
+            mRowId = RowID;
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.note_view_container, fragment)
                     .commit();
@@ -76,6 +82,30 @@ public class NotesListActivity extends FragmentActivity
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_note:
+                createNote();
+                return true;
+            default:
+                return super.onMenuItemSelected(featureId, item);
+        }
+    }
+
+    private void createNote() {
+        Intent i = new Intent(this, NoteEdit.class);
+        startActivityForResult(i, 0);
+    }
+
+
     public void debugToast(String s) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
@@ -83,5 +113,9 @@ public class NotesListActivity extends FragmentActivity
         Toast toast = Toast.makeText(context, s, duration);
         toast.show();
 
+    }
+
+    public Long getID() {
+        return mRowId;
     }
 }
