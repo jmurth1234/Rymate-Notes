@@ -27,7 +27,7 @@
             tools:layout="@android:layout/list_content" />
 
     <FrameLayout
-            android:id="@+id/note_view_container"
+            android:id="@+id/note_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3" />

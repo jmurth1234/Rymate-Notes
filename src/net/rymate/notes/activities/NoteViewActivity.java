@@ -3,7 +3,10 @@ package net.rymate.notes.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,12 +15,16 @@ import android.widget.Toast;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends FragmentActivity {
+public class NoteViewActivity extends FragmentActivity
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
+
+    Long mRowId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +46,6 @@ public class NoteViewActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             // Create the note view fragment and add it to the activity
             // using a fragment transaction.
-            Long mRowId;
             mRowId = (savedInstanceState == null) ? null :
                     (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
             if (mRowId == null) {
@@ -53,7 +59,7 @@ public class NoteViewActivity extends FragmentActivity {
             NoteViewFragment fragment = new NoteViewFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.note_view_container, fragment)
+                    .replace(R.id.note_container, fragment)
                     .commit();
         }
     }
@@ -80,8 +86,51 @@ public class NoteViewActivity extends FragmentActivity {
                 NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
                 return true;
             case R.id.edit_note:
-
+                Intent i = new Intent(this, NoteEditActivity.class);
+                i.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
+                startActivityForResult(i, 2);
+                return true;
+            case R.id.delete_note:
+                showDeleteDialog(mRowId);
+                NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showDeleteDialog(long noteId) {
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment dialog = new DeleteNoteDialogFragment();
+        dialog.show(getSupportFragmentManager(), "dialog");
+    }
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        NotesDbAdapter mDbHelper = new NotesDbAdapter(this);
+        mDbHelper.open();
+        mDbHelper.deleteNote(mRowId);
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, R.string.note_deleted, duration);
+        toast.show();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
     }
 }

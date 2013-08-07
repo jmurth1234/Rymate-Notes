@@ -5,21 +5,14 @@ import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import net.rymate.notes.NoteEdit;
-import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
 
@@ -51,7 +44,6 @@ public class NotesListFragment extends ListFragment
      */
     private NotesDbAdapter mDbHelper;
 
-    private int mStackLevel;
     private long noteId;
 
     /**
@@ -75,13 +67,6 @@ public class NotesListFragment extends ListFragment
         public void onItemSelected(Long id) {
         }
     };
-
-    private static final int ACTIVITY_CREATE = 0;
-    private static final int ACTIVITY_EDIT = 1;
-    private static final int ACTIVITY_VIEW = 2;
-
-    private static final int EDIT_ID = Menu.FIRST;
-    private static final int DELETE_ID = Menu.FIRST + 1;
 
     public NotesListFragment() {}
 
@@ -121,8 +106,6 @@ public class NotesListFragment extends ListFragment
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
 
-        // context menu
-        registerForContextMenu(getListView());
     }
 
     @Override
@@ -185,37 +168,7 @@ public class NotesListFragment extends ListFragment
         mActivatedPosition = position;
     }
 
-    /**
-     * Context menu related code
-     */
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, EDIT_ID, 0, R.string.edit_note);
-        menu.add(1, DELETE_ID, 1, R.string.menu_delete);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case DELETE_ID:
-                showDeleteDialog(info.id);
-                return true;
-            case EDIT_ID:
-                // TODO: proper code for fragment note editing UI
-                // Intent i = new Intent(this, NoteEdit.class);
-                // i.putExtra(NotesDbAdapter.KEY_ROWID, info.id);
-                // startActivityForResult(i, ACTIVITY_EDIT);
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
     public void showDeleteDialog(long noteId) {
-        mStackLevel++;
-
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.

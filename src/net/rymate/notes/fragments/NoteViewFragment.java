@@ -62,4 +62,8 @@ public class NoteViewFragment extends Fragment {
         return rootView;
     }
 
+    public void setText(String text) {
+        mBodyText.setText(text);
+    }
+
 }

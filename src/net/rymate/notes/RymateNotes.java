@@ -41,7 +41,7 @@ public class RymateNotes extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         FragmentManager fragmentManager = getFragmentManager();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_notes_list);
+        setContentView(R.layout.activity_notes);
         mDbHelper = new NotesDbAdapter(this);
         mDbHelper.open();
         fillData();
