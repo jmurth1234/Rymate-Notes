@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import net.rymate.notes.NoteEdit;
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 
@@ -20,12 +22,12 @@ import net.rymate.notes.fragments.NotesListFragment;
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends FragmentActivity
-        implements NotesListFragment.Callbacks {
+        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+/**
+ * Whether or not the activity is in two-pane mode, i.e. running on a tablet
+ * device.
+ */
     private boolean mTwoPane;
     private Long mRowId;
     private boolean selected;
@@ -119,4 +121,20 @@ public class NotesListActivity extends FragmentActivity
     public Long getID() {
         return mRowId;
     }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        ((NotesListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.note_list))
+                .onDialogPositiveClick(dialog);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        ((NotesListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.note_list))
+                .onDialogNegativeClick(dialog);
+
+    }
+
 }

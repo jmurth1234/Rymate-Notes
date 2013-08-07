@@ -17,16 +17,18 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import net.rymate.notes.NoteEdit;
+import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
 
 /**
  * Created by Ryan on 04/07/13.
  */
-public class NotesListFragment extends ListFragment {
+public class NotesListFragment extends ListFragment
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     /**
-     * The serialization key representing the seletced note.
+     * The serialization key representing the selected note.
      * Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
@@ -48,6 +50,7 @@ public class NotesListFragment extends ListFragment {
     private NotesDbAdapter mDbHelper;
 
     private int mStackLevel;
+    private long noteId;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -196,7 +199,7 @@ public class NotesListFragment extends ListFragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case DELETE_ID:
-                showDeleteDialog((int)info.id);
+                showDeleteDialog(info.id);
                 return true;
             case EDIT_ID:
                 // TODO: proper code for fragment note editing UI
@@ -208,7 +211,7 @@ public class NotesListFragment extends ListFragment {
         return super.onContextItemSelected(item);
     }
 
-    public void showDeleteDialog(int noteId) {
+    public void showDeleteDialog(long noteId) {
         mStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
@@ -222,7 +225,23 @@ public class NotesListFragment extends ListFragment {
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = DeleteNoteDialogFragment.newInstance(mStackLevel, noteId, mDbHelper);
-        newFragment.show(ft, "dialog");
+        DialogFragment dialog = new DeleteNoteDialogFragment();
+        dialog.show(getFragmentManager(), "dialog");
+        this.noteId = noteId;
+    }
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        mDbHelper.deleteNote(noteId);
+        this.fillData();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
     }
 }
