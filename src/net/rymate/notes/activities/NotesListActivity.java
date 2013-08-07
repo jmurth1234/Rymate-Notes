@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import net.rymate.notes.NoteEdit;
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
@@ -110,7 +109,8 @@ public class NotesListActivity extends FragmentActivity
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.new_note:
-                createNote();
+                Intent detailIntent = new Intent(this, NoteEditActivity.class);
+                startActivity(detailIntent);
                 return true;
             case R.id.edit_note:
                 if (mTwoPane) {
@@ -132,9 +132,9 @@ public class NotesListActivity extends FragmentActivity
                 } else {
                     // In single-pane mode, simply start the detail activity
                     // for the selected item ID.
-                    Intent detailIntent = new Intent(this, NoteEditActivity.class);
-                    detailIntent.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
-                    startActivity(detailIntent);
+                    Intent intent = new Intent(this, NoteEditActivity.class);
+                    intent.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
+                    startActivity(intent);
                 }
                 return true;
             case R.id.save_note:
@@ -162,11 +162,6 @@ public class NotesListActivity extends FragmentActivity
             default:
                 return super.onMenuItemSelected(featureId, item);
         }
-    }
-
-    private void createNote() {
-        Intent i = new Intent(this, NoteEdit.class);
-        startActivityForResult(i, 0);
     }
 
     public Long getID() {
