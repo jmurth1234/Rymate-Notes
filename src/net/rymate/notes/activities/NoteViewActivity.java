@@ -79,6 +79,8 @@ public class NoteViewActivity extends FragmentActivity {
                 //
                 NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
                 return true;
+            case R.id.edit_note:
+
         }
         return super.onOptionsItemSelected(item);
     }

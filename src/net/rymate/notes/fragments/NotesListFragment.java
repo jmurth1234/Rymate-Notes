@@ -1,6 +1,7 @@
 package net.rymate.notes.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import net.rymate.notes.NoteEdit;
 import net.rymate.notes.activities.NotesListActivity;
@@ -237,6 +239,10 @@ public class NotesListFragment extends ListFragment
     public void onDialogPositiveClick(DialogFragment dialog) {
         mDbHelper.deleteNote(noteId);
         this.fillData();
+        Context context = getActivity().getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, R.string.note_deleted, duration);
+        toast.show();
     }
 
     @Override

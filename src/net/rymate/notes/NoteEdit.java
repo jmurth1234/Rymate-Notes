@@ -27,7 +27,7 @@ public class NoteEdit extends Activity {
         mDbHelper = new NotesDbAdapter(this);
         mDbHelper.open();
 
-        setContentView(R.layout.note_edit);
+        setContentView(R.layout.fragment_note_edit);
         setTitle(R.string.edit_note);
 
         mTitleText = (EditText) findViewById(R.id.title);

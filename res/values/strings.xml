@@ -19,4 +19,5 @@
     <string name="dialog_delete">Are you sure you want to delete this note?</string>
     <string name="dialog_confirm">Yes</string>
     <string name="dialog_cancel">No</string>
+    <string name="note_deleted">Your note was deleted!</string>
 </resources>

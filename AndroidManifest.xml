@@ -20,5 +20,6 @@
         </activity>
         <activity android:name=".NoteEdit" android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity android:name=".activities.NoteViewActivity"/>
+        <activity android:name=".activities.NoteEditActivity" android:windowSoftInputMode="stateVisible|adjustResize" />
     </application>
 </manifest>
