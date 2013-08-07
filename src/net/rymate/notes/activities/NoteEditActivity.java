@@ -48,10 +48,17 @@ public class NoteEditActivity extends FragmentActivity {
                         : null;
             }
 
-            Bundle arguments = new Bundle();
-            arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-            NoteEditFragment fragment = new NoteEditFragment();
-            fragment.setArguments(arguments);
+            NoteEditFragment fragment;
+
+            if (mRowId != null) {
+                Bundle arguments = new Bundle();
+                arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
+                fragment = new NoteEditFragment(false);
+                fragment.setArguments(arguments);
+            } else {
+                fragment = new NoteEditFragment(true);
+            }
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.note_container, fragment)
                     .commit();

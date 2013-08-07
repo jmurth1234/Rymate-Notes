@@ -17,8 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
-import net.rymate.notes.RymateNotes;
-import net.rymate.notes.activities.NoteViewActivity;
+
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.database.NotesDbAdapter;
 
@@ -31,6 +30,11 @@ public class NoteEditFragment extends Fragment {
     private EditText mBodyText;
     private Long mRowId;
     private NotesDbAdapter mDbHelper;
+    private boolean newNote;
+
+    public NoteEditFragment(boolean b) {
+        this.newNote = b;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,17 +42,19 @@ public class NoteEditFragment extends Fragment {
         mDbHelper = new NotesDbAdapter(this.getActivity());
         mDbHelper.open();
 
-        mRowId = (savedInstanceState == null) ? null :
-                (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
-        if (mRowId == null) {
-            Bundle extras = getActivity().getIntent().getExtras();
-            mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
-                    : null;
-        }
+        if (!newNote) {
+            mRowId = (savedInstanceState == null) ? null :
+                    (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
+            if (mRowId == null) {
+                Bundle extras = getActivity().getIntent().getExtras();
+                mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
+                        : null;
+            }
 
-        if (mRowId == null) {
-            NotesListActivity list = (NotesListActivity) getActivity();
-            mRowId = list.getID();
+            if (mRowId == null) {
+                NotesListActivity list = (NotesListActivity) getActivity();
+                mRowId = list.getID();
+            }
         }
     }
 

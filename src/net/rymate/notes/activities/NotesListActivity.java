@@ -119,7 +119,7 @@ public class NotesListActivity extends FragmentActivity
                     // fragment transaction.
                     Bundle arguments = new Bundle();
                     arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-                    NoteEditFragment fragment = new NoteEditFragment();
+                    NoteEditFragment fragment = new NoteEditFragment(false);
                     fragment.setArguments(arguments);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.note_container, fragment)
