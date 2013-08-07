@@ -26,6 +26,7 @@ public class NotesDbAdapter {
     public static final String KEY_TITLE = "title";
     public static final String KEY_BODY = "body";
     public static final String KEY_ROWID = "_id";
+    public static final String KEY_CATID = "cat_id";
 
     private static final String TAG = "NotesDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -36,7 +37,7 @@ public class NotesDbAdapter {
      */
     private static final String DATABASE_CREATE =
         "create table gen (_id integer primary key autoincrement, "
-        + "title text not null, body text not null);";
+        + "title text not null, body text not null, cat_id integer);";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "gen";
@@ -113,6 +114,7 @@ public class NotesDbAdapter {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE, title);
         initialValues.put(KEY_BODY, body);
+        initialValues.put(KEY_CATID, 0);
 
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
