@@ -92,10 +92,10 @@ public class NoteViewActivity extends FragmentActivity
                 return true;
             case R.id.delete_note:
                 showDeleteDialog(mRowId);
-                NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public void showDeleteDialog(long noteId) {
@@ -126,6 +126,7 @@ public class NoteViewActivity extends FragmentActivity
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, R.string.note_deleted, duration);
         toast.show();
+        NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
     }
 
     @Override
