@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
 
 /**
