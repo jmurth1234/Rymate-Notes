@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuInflater;
+
 import android.widget.Toast;
 
 import net.rymate.notes.R;
@@ -21,7 +23,7 @@ import net.rymate.notes.fragments.NoteViewFragment;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends FragmentActivity
+public class NoteViewActivity extends SherlockFragmentActivity
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;
@@ -32,7 +34,7 @@ public class NoteViewActivity extends FragmentActivity
         setContentView(R.layout.activity_note_view);
 
         // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -66,7 +68,7 @@ public class NoteViewActivity extends FragmentActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.noteview_menu_phone, menu);
 
         return true;

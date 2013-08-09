@@ -1,20 +1,15 @@
 package net.rymate.notes.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragment;
 
 import net.rymate.notes.R;
 
@@ -24,7 +19,7 @@ import net.rymate.notes.database.NotesDbAdapter;
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditFragment extends Fragment {
+public class NoteEditFragment extends SherlockFragment {
 
     private EditText mTitleText;
     private EditText mBodyText;

@@ -2,11 +2,12 @@ package net.rymate.notes.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuInflater;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
@@ -18,7 +19,7 @@ import net.rymate.notes.fragments.NotesListFragment;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NotesListActivity extends FragmentActivity
+public class NotesListActivity extends SherlockFragmentActivity
         implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     /**
@@ -85,7 +86,7 @@ public class NotesListActivity extends FragmentActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
         return true;
     }
@@ -94,12 +95,12 @@ public class NotesListActivity extends FragmentActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (selected) {
             menu.clear();
-            MenuInflater inflater = getMenuInflater();
+            MenuInflater inflater = getSupportMenuInflater();
             inflater.inflate(R.menu.noteview_menu_tablet, menu);
             selected = false;
         } else if (editing) {
             menu.clear();
-            MenuInflater inflater = getMenuInflater();
+            MenuInflater inflater = getSupportMenuInflater();
             inflater.inflate(R.menu.edit_activity, menu);
         }
         return true;

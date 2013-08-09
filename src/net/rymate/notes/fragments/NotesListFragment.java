@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockListFragment;
 
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
@@ -19,7 +20,7 @@ import net.rymate.notes.R;
 /**
  * Created by Ryan on 04/07/13.
  */
-public class NotesListFragment extends ListFragment
+public class NotesListFragment extends SherlockListFragment
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     /**

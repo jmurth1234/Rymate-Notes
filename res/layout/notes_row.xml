@@ -17,11 +17,13 @@
 <TwoLineListItem xmlns:android="http://schemas.android.com/apk/res/android"
                  android:paddingTop="2dip"
                  android:paddingBottom="2dip"
+                 android:paddingLeft="4dip"
+                 android:paddingRight="4dip"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
-                 android:background="?android:attr/activatedBackgroundIndicator"
                  android:minHeight="?android:attr/listPreferredItemHeight"
-                 android:mode="twoLine">
+                 android:mode="twoLine"
+                 android:clickable="false">
 
     <TextView
             android:id="@android:id/text1"
