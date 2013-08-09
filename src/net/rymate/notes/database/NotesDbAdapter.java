@@ -45,6 +45,11 @@ public class NotesDbAdapter {
 
     private final Context mCtx;
 
+    public static String getSample() {
+        String sample = sample(KEY_BODY);
+        return sample;
+    }
+
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
         DatabaseHelper(Context context) {
@@ -174,4 +179,12 @@ public class NotesDbAdapter {
 
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
+
+    private static String sample(String s) {
+        Pattern pattern = Pattern.compile("([\\S]+\\s*){1,8}");
+        Matcher matcher = pattern.matcher(s);
+        matcher.find();
+        return matcher.group();
+    }
+
 }
