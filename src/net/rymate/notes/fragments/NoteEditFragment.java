@@ -103,29 +103,31 @@ public class NoteEditFragment extends SherlockFragment {
         String body = mBodyText.getText().toString();
         boolean saved;
 
-        if (mRowId == null) {
-            long id = mDbHelper.createNote(title, body);
-            if (id > 0) {
-                mRowId = id;
-                saved = true;
+        if ((title != "") || (body != "")) {
+            if (mRowId == null) {
+                long id = mDbHelper.createNote(title, body);
+                if (id > 0) {
+                    mRowId = id;
+                    saved = true;
+                } else {
+                    saved = false;
+                }
             } else {
-                saved = false;
+                saved = mDbHelper.updateNote(mRowId, title, body);
             }
-        } else {
-            saved = mDbHelper.updateNote(mRowId, title, body);
-        }
 
-        Context context = getActivity().getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        int durationFailed = Toast.LENGTH_LONG;
+            Context context = getActivity().getApplicationContext();
+            int duration = Toast.LENGTH_SHORT;
+            int durationFailed = Toast.LENGTH_LONG;
 
-        if (saved) {
-            Toast toast = Toast.makeText(context, R.string.note_saved, duration);
-            toast.show();
-        } else {
-            Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
-            toast.show();
+            if (saved) {
+                Toast toast = Toast.makeText(context, R.string.note_saved, duration);
+                toast.show();
+            } else {
+                Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
+                toast.show();
 
+            }
         }
 
     }
