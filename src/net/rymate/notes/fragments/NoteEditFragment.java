@@ -105,7 +105,7 @@ public class NoteEditFragment extends SherlockFragment {
         String body = mBodyText.getText().toString();
         boolean saved;
 
-        if ((title != "") || (body != "")) {
+        if (!body.isEmpty()) {
             if (mRowId == null) {
                 long id = mDbHelper.createNote(title, body);
                 if (id > 0) {
@@ -131,6 +131,5 @@ public class NoteEditFragment extends SherlockFragment {
 
             }
         }
-
     }
 }
