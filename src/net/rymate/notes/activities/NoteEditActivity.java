@@ -47,27 +47,27 @@ public class NoteEditActivity extends SherlockFragmentActivity {
                 mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
                         : null;
             }
-
-            NoteEditFragment fragment;
-
-            if (mRowId != null) {
-                Bundle arguments = new Bundle();
-                arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-                fragment = new NoteEditFragment(false);
-                fragment.setArguments(arguments);
-            } else {
-                fragment = new NoteEditFragment(true);
-            }
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.note_container, fragment)
-                    .commit();
-
-            NotesDbAdapter mDbHelper = new NotesDbAdapter(this);
-            mDbHelper.open();
-
-            setTitle(R.string.edit_note);
         }
+        NoteEditFragment fragment;
+
+        if (mRowId != null) {
+            Bundle arguments = new Bundle();
+            arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
+            fragment = new NoteEditFragment(false);
+            fragment.setArguments(arguments);
+        } else {
+            fragment = new NoteEditFragment(true);
+        }
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.note_container, fragment)
+                .commit();
+
+        NotesDbAdapter mDbHelper = new NotesDbAdapter(this);
+        mDbHelper.open();
+
+        setTitle(R.string.edit_note);
+
     }
 
     @Override

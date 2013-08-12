@@ -1,6 +1,7 @@
 package net.rymate.notes.fragments;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -98,6 +99,12 @@ public class NoteEditFragment extends SherlockFragment {
     public void onResume() {
         super.onResume();
         populateFields();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
     }
 
     public void saveState() {

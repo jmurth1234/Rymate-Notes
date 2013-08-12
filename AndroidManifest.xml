@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="net.rymate.notes"
-          android:versionCode="3"
-          android:versionName="1.0.2" >
+          android:versionCode="4"
+          android:versionName="1.1" >
 
     <uses-sdk
             android:minSdkVersion="10"
@@ -19,6 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.NoteViewActivity"/>
-        <activity android:name=".activities.NoteEditActivity" android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".activities.NoteEditActivity"
+                  android:windowSoftInputMode="stateVisible|adjustResize"
+                  android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 </manifest>
