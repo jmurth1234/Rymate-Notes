@@ -37,18 +37,20 @@ public class NoteEditFragment extends SherlockFragment {
         mDbHelper = new NotesDbAdapter(this.getActivity());
         mDbHelper.open();
 
-        if (!newNote) {
-            mRowId = (savedInstanceState == null) ? null :
-                    (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
-            if (mRowId == null) {
-                Bundle extras = getActivity().getIntent().getExtras();
-                mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
-                        : null;
-            }
+        if (savedInstanceState == null) {
+            if (!newNote) {
+                mRowId = (savedInstanceState == null) ? null :
+                        (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
+                if (mRowId == null) {
+                    Bundle extras = getActivity().getIntent().getExtras();
+                    mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
+                            : null;
+                }
 
-            if (mRowId == null) {
-                NotesListActivity list = (NotesListActivity) getActivity();
-                mRowId = list.getID();
+                if (mRowId == null) {
+                    NotesListActivity list = (NotesListActivity) getActivity();
+                    mRowId = list.getID();
+                }
             }
         }
     }
