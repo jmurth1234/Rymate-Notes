@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:notes="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/edit_note"
           android:icon="@android:drawable/ic_menu_edit"
           android:title="@string/edit_note"
-          android:showAsAction="ifRoom|withText" />
+          notes:showAsAction="ifRoom|withText" />
     <item android:id="@+id/delete_note"
           android:icon="@android:drawable/ic_menu_delete"
           android:title="@string/menu_delete"
-          android:showAsAction="ifRoom|withText" />
+          notes:showAsAction="ifRoom|withText" />
 </menu>

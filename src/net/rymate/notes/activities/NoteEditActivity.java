@@ -3,11 +3,10 @@ package net.rymate.notes.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuInflater;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
@@ -16,7 +15,7 @@ import net.rymate.notes.fragments.NoteEditFragment;
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditActivity extends SherlockFragmentActivity {
+public class NoteEditActivity extends ActionBarActivity {
     Long mRowId;
 
 
@@ -72,7 +71,7 @@ public class NoteEditActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_activity, menu);
 
         return true;

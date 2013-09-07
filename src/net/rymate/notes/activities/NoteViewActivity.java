@@ -8,11 +8,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuInflater;
-
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
@@ -23,7 +22,7 @@ import net.rymate.notes.fragments.NoteViewFragment;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends SherlockFragmentActivity
+public class NoteViewActivity extends ActionBarActivity
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;
@@ -68,7 +67,7 @@ public class NoteViewActivity extends SherlockFragmentActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.noteview_menu_phone, menu);
 
         return true;
@@ -136,4 +135,4 @@ public class NoteViewActivity extends SherlockFragmentActivity
         // User touched the dialog's negative button
 
     }
-}
+    }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:notes="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/save_note"
           android:icon="@android:drawable/ic_menu_save"
           android:title="@string/confirm"
-          android:showAsAction="ifRoom|withText" />
+          notes:showAsAction="ifRoom|withText" />
 </menu>

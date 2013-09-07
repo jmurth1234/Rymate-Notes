@@ -2,12 +2,11 @@ package net.rymate.notes.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
 
 import net.rymate.notes.R;
 import net.rymate.notes.activities.NotesListActivity;
@@ -16,7 +15,7 @@ import net.rymate.notes.database.NotesDbAdapter;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewFragment extends SherlockFragment {
+public class NoteViewFragment extends Fragment {
 
     private TextView mBodyText;
     public static Long mRowId;

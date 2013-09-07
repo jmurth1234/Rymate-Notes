@@ -2,12 +2,12 @@ package net.rymate.notes.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuInflater;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
@@ -19,7 +19,7 @@ import net.rymate.notes.fragments.NotesListFragment;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NotesListActivity extends SherlockFragmentActivity
+public class NotesListActivity extends ActionBarActivity
         implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     /**
@@ -45,8 +45,8 @@ public class NotesListActivity extends SherlockFragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((NotesListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.note_list))
+            FragmentManager fm = getSupportFragmentManager();
+            ((NotesListFragment) fm.findFragmentById(R.id.note_list))
                     .setActivateOnItemClick(true);
         }
 
@@ -86,7 +86,7 @@ public class NotesListActivity extends SherlockFragmentActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
         return true;
     }
@@ -95,19 +95,19 @@ public class NotesListActivity extends SherlockFragmentActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (selected) {
             menu.clear();
-            MenuInflater inflater = getSupportMenuInflater();
+            MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.noteview_menu_tablet, menu);
             selected = false;
         } else if (editing) {
             menu.clear();
-            MenuInflater inflater = getSupportMenuInflater();
+            MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.edit_activity, menu);
         }
         return true;
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.new_note:
                 Intent detailIntent = new Intent(this, NoteEditActivity.class);
@@ -161,7 +161,7 @@ public class NotesListActivity extends SherlockFragmentActivity
                         .findFragmentById(R.id.note_list))
                         .showDeleteDialog(mRowId);
             default:
-                return super.onMenuItemSelected(featureId, item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
