@@ -20,4 +20,6 @@
     <string name="dialog_confirm">Yes</string>
     <string name="dialog_cancel">No</string>
     <string name="note_deleted">Your note was deleted!</string>
+    <string name="drawer_close">Close Categories</string>
+    <string name="drawer_open">Open Categories</string>
 </resources>

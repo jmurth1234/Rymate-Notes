@@ -1,13 +1,20 @@
 package net.rymate.notes.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
@@ -30,6 +37,10 @@ public class NotesListActivity extends ActionBarActivity
     private Long mRowId;
     private boolean selected;
     private boolean editing;
+    private Menu menu;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ListView mDrawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +60,36 @@ public class NotesListActivity extends ActionBarActivity
             ((NotesListFragment) fm.findFragmentById(R.id.note_list))
                     .setActivateOnItemClick(true);
         }
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // the layout
+        mDrawerList = (ListView) findViewById(R.id.left_drawer); // list of categories
+
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description */
+                R.string.drawer_close  /* "close drawer" description */
+        ) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle("Rymate Notes");
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle("Categories");
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
@@ -73,7 +114,12 @@ public class NotesListActivity extends ActionBarActivity
                     .commit();
 
             selected = true;
-            invalidateOptionsMenu();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                // check for 3.0+
+                invalidateOptionsMenu();
+            } else {
+                updateMenu();
+            }
 
         } else {
             // In single-pane mode, simply start the detail activity
@@ -88,6 +134,7 @@ public class NotesListActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -108,6 +155,9 @@ public class NotesListActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         switch (item.getItemId()) {
             case R.id.new_note:
                 Intent detailIntent = new Intent(this, NoteEditActivity.class);
@@ -128,7 +178,13 @@ public class NotesListActivity extends ActionBarActivity
 
                     editing = true;
 
-                    invalidateOptionsMenu();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        // check for 3.0+
+                        invalidateOptionsMenu();
+                    } else {
+                        updateMenu();
+                    }
+
 
                 } else {
                     // In single-pane mode, simply start the detail activity
@@ -153,7 +209,12 @@ public class NotesListActivity extends ActionBarActivity
                     editing = false;
                 }
                 selected = true;
-                invalidateOptionsMenu();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    // check for 3.0+
+                    invalidateOptionsMenu();
+                } else {
+                    updateMenu();
+                }
 
                 return true;
             case R.id.delete_note:
@@ -167,6 +228,19 @@ public class NotesListActivity extends ActionBarActivity
 
     public Long getID() {
         return mRowId;
+    }
+
+    private void updateMenu() {
+        if (selected) {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.noteview_menu_tablet, menu);
+            selected = false;
+        } else if (editing) {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.edit_activity, menu);
+        }
     }
 
     @Override
@@ -186,7 +260,6 @@ public class NotesListActivity extends ActionBarActivity
                 .onDialogNegativeClick(dialog);
 
     }
-
 
 
 }
