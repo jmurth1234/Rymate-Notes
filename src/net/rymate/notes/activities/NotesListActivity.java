@@ -1,6 +1,8 @@
 package net.rymate.notes.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -16,18 +18,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.github.espiandev.showcaseview.ShowcaseView;
+
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
+import net.rymate.notes.ui.DrawerToggle;
+import net.rymate.notes.ui.UIUtils;
 
 /**
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends ActionBarActivity
-        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener {
+        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener,
+        ShowcaseView.OnShowcaseEventListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -39,8 +46,11 @@ public class NotesListActivity extends ActionBarActivity
     private boolean editing;
     private Menu menu;
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerToggle mDrawerToggle;
     private ListView mDrawerList;
+    ShowcaseView sv;
+    private SharedPreferences pref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +79,7 @@ public class NotesListActivity extends ActionBarActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(
+        mDrawerToggle = new DrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
                 R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
@@ -90,6 +100,8 @@ public class NotesListActivity extends ActionBarActivity
 
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        pref = getSharedPreferences("rymatenotesprefs", MODE_PRIVATE);
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
@@ -114,7 +126,7 @@ public class NotesListActivity extends ActionBarActivity
                     .commit();
 
             selected = true;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if (UIUtils.hasHoneycomb()) {
                 // check for 3.0+
                 invalidateOptionsMenu();
             } else {
@@ -135,6 +147,22 @@ public class NotesListActivity extends ActionBarActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
         this.menu = menu;
+        if(pref.getBoolean("firststart", true)){
+            // update sharedpreference - another start wont be the first
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("firststart", false);
+            editor.commit(); // apply changes
+
+            // we tutorial now
+            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+            co.hideOnClickOutside = true;
+
+            sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
+                    R.string.showcase_note_title, R.string.showcase_note_message, co);
+            sv.setOnShowcaseEventListener(this);
+            sv.show();
+
+        }
         return true;
     }
 
@@ -178,7 +206,7 @@ public class NotesListActivity extends ActionBarActivity
 
                     editing = true;
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    if (UIUtils.hasHoneycomb()) {
                         // check for 3.0+
                         invalidateOptionsMenu();
                     } else {
@@ -209,7 +237,7 @@ public class NotesListActivity extends ActionBarActivity
                     editing = false;
                 }
                 selected = true;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (UIUtils.hasHoneycomb()) {
                     // check for 3.0+
                     invalidateOptionsMenu();
                 } else {
@@ -224,6 +252,25 @@ public class NotesListActivity extends ActionBarActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     public Long getID() {
@@ -258,6 +305,16 @@ public class NotesListActivity extends ActionBarActivity
         ((NotesListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.note_list))
                 .onDialogNegativeClick(dialog);
+
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
     }
 

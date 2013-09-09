@@ -22,4 +22,8 @@
     <string name="note_deleted">Your note was deleted!</string>
     <string name="drawer_close">Close Categories</string>
     <string name="drawer_open">Open Categories</string>
+    <string name="showcase_note_title">Welcome to Rymate Notes</string>
+    <string name="showcase_note_message">Press the + button to add a note. Slide from the left to
+        view note categories.
+    </string>
 </resources>
