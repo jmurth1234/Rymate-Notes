@@ -20,7 +20,7 @@
     <!-- yay custom themes -->
     <style name="CustomShowcaseTheme" parent="ShowcaseView">
         <item name="sv_showcaseColor">#0099CC</item>
-        <item name="sv_buttonText">Get Started!</item>
+        <item name="sv_buttonText">@string/showcase_button</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
         <item name="sv_detailTextAppearance">@style/CustomText</item>
     </style>
@@ -34,4 +34,5 @@
     </style>
 
 
+    <string name="showcase_button">Get started!</string>
 </resources>

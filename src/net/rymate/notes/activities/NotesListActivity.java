@@ -7,7 +7,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -26,6 +28,7 @@ import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
+import net.rymate.notes.fragments.WelcomeDialogFragment;
 import net.rymate.notes.ui.DrawerToggle;
 import net.rymate.notes.ui.UIUtils;
 
@@ -34,7 +37,7 @@ import net.rymate.notes.ui.UIUtils;
  */
 public class NotesListActivity extends ActionBarActivity
         implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener,
-        ShowcaseView.OnShowcaseEventListener {
+        WelcomeDialogFragment.WelcomeDialogListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -147,20 +150,34 @@ public class NotesListActivity extends ActionBarActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
         this.menu = menu;
-        if(pref.getBoolean("firststart", true)){
+        if(pref.getBoolean("firststart", true)) {
+
             // update sharedpreference - another start wont be the first
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("firststart", false);
             editor.commit(); // apply changes
 
-            // we tutorial now
+            if (UIUtils.hasHoneycomb()) {
+            // fancy 3.0+ welcome view
             ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
             co.hideOnClickOutside = true;
 
             sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
                     R.string.showcase_note_title, R.string.showcase_note_message, co);
-            sv.setOnShowcaseEventListener(this);
             sv.show();
+            } else {
+                // fallback to a dialog in previous versions of android :(
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                // Create and show the dialog.
+                DialogFragment dialog = new WelcomeDialogFragment();
+                dialog.show(getSupportFragmentManager(), "dialog");
+            }
 
         }
         return true;
@@ -309,14 +326,10 @@ public class NotesListActivity extends ActionBarActivity
     }
 
     @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+    public void onWelcomeDialogClick(DialogFragment dialog) {
 
     }
 
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
-    }
 
 
 }
