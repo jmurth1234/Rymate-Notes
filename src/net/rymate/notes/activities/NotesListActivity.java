@@ -28,16 +28,15 @@ import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
-import net.rymate.notes.fragments.WelcomeDialogFragment;
 import net.rymate.notes.ui.DrawerToggle;
+import net.rymate.notes.ui.ShowcaseViewGB;
 import net.rymate.notes.ui.UIUtils;
 
 /**
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends ActionBarActivity
-        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener,
-        WelcomeDialogFragment.WelcomeDialogListener {
+        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -51,7 +50,7 @@ public class NotesListActivity extends ActionBarActivity
     private DrawerLayout mDrawerLayout;
     private DrawerToggle mDrawerToggle;
     private ListView mDrawerList;
-    ShowcaseView sv;
+    private ShowcaseViewGB sv;
     private SharedPreferences pref;
 
 
@@ -157,28 +156,13 @@ public class NotesListActivity extends ActionBarActivity
             editor.putBoolean("firststart", false);
             editor.commit(); // apply changes
 
-            if (UIUtils.hasHoneycomb()) {
             // fancy 3.0+ welcome view
-            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+            ShowcaseViewGB.ConfigOptions co = new ShowcaseViewGB.ConfigOptions();
             co.hideOnClickOutside = true;
 
-            sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
+            sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseViewGB.ITEM_ACTION_ITEM, R.id.new_note, this,
                     R.string.showcase_note_title, R.string.showcase_note_message, co);
             sv.show();
-            } else {
-                // fallback to a dialog in previous versions of android :(
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment dialog = new WelcomeDialogFragment();
-                dialog.show(getSupportFragmentManager(), "dialog");
-            }
-
         }
         return true;
     }
@@ -324,12 +308,5 @@ public class NotesListActivity extends ActionBarActivity
                 .onDialogNegativeClick(dialog);
 
     }
-
-    @Override
-    public void onWelcomeDialogClick(DialogFragment dialog) {
-
-    }
-
-
 
 }

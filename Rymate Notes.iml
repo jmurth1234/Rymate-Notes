@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="showcaseview-library" />
     <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="library" name="android-support-v7-appcompat" level="project" />
+    <orderEntry type="library" name="Maven: com.nineoldandroids:library:2.4.0" level="project" />
   </component>
 </module>
 
