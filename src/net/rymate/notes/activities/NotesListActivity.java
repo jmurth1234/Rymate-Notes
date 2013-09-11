@@ -1,36 +1,37 @@
 package net.rymate.notes.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.fragments.CategoriesListFragment;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.DrawerToggle;
 import net.rymate.notes.ui.ShowcaseViewGB;
-import net.rymate.notes.ui.UIUtils;
 
 /**
  * Created by Ryan on 05/07/13.
@@ -46,7 +47,6 @@ public class NotesListActivity extends ActionBarActivity
     private Long mRowId;
     private boolean selected;
     private boolean editing;
-    private Menu menu;
     private DrawerLayout mDrawerLayout;
     private DrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -92,11 +92,13 @@ public class NotesListActivity extends ActionBarActivity
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 getSupportActionBar().setTitle("Rymate Notes");
+                supportInvalidateOptionsMenu();
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle("Categories");
+                supportInvalidateOptionsMenu();
             }
         };
 
@@ -105,8 +107,20 @@ public class NotesListActivity extends ActionBarActivity
 
         pref = getSharedPreferences("rymatenotesprefs", MODE_PRIVATE);
 
+        SampleAdapter adapter = new SampleAdapter(getApplicationContext());
+        adapter.add(new SampleItem("Notes", true));
+        adapter.add(new SampleItem("All Notes", false));
+        adapter.add(new SampleItem("Uncategorised", false));
+        adapter.add(new SampleItem("Categories", true));
+
+        for (int i = 1; i < 21; i++) {
+            adapter.add(new SampleItem("Dummy Category " + i, false));
+        }
+        mDrawerList.setAdapter(adapter);
+
         // TODO: If exposing deep links into your app, handle intents here.
     }
+
 
     /**
      * Callback method from {@link NotesListFragment.Callbacks}
@@ -128,12 +142,7 @@ public class NotesListActivity extends ActionBarActivity
                     .commit();
 
             selected = true;
-            if (UIUtils.hasHoneycomb()) {
-                // check for 3.0+
-                invalidateOptionsMenu();
-            } else {
-                updateMenu();
-            }
+            supportInvalidateOptionsMenu();
 
         } else {
             // In single-pane mode, simply start the detail activity
@@ -148,7 +157,6 @@ public class NotesListActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
-        this.menu = menu;
         if(pref.getBoolean("firststart", true)) {
 
             // update sharedpreference - another start wont be the first
@@ -160,7 +168,7 @@ public class NotesListActivity extends ActionBarActivity
             ShowcaseViewGB.ConfigOptions co = new ShowcaseViewGB.ConfigOptions();
             co.hideOnClickOutside = true;
 
-            sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseViewGB.ITEM_ACTION_ITEM, R.id.new_note, this,
+            sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
                     R.string.showcase_note_title, R.string.showcase_note_message, co);
             sv.show();
         }
@@ -169,6 +177,13 @@ public class NotesListActivity extends ActionBarActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_activity_navdrawer, menu);
+            return true;
+        }
+
         if (selected) {
             menu.clear();
             MenuInflater inflater = getMenuInflater();
@@ -207,14 +222,7 @@ public class NotesListActivity extends ActionBarActivity
 
                     editing = true;
 
-                    if (UIUtils.hasHoneycomb()) {
-                        // check for 3.0+
-                        invalidateOptionsMenu();
-                    } else {
-                        updateMenu();
-                    }
-
-
+                    supportInvalidateOptionsMenu();
                 } else {
                     // In single-pane mode, simply start the detail activity
                     // for the selected item ID.
@@ -238,13 +246,7 @@ public class NotesListActivity extends ActionBarActivity
                     editing = false;
                 }
                 selected = true;
-                if (UIUtils.hasHoneycomb()) {
-                    // check for 3.0+
-                    invalidateOptionsMenu();
-                } else {
-                    updateMenu();
-                }
-
+                supportInvalidateOptionsMenu();
                 return true;
             case R.id.delete_note:
                 ((NotesListFragment) getSupportFragmentManager()
@@ -278,19 +280,6 @@ public class NotesListActivity extends ActionBarActivity
         return mRowId;
     }
 
-    private void updateMenu() {
-        if (selected) {
-            menu.clear();
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.noteview_menu_tablet, menu);
-            selected = false;
-        } else if (editing) {
-            menu.clear();
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.edit_activity, menu);
-        }
-    }
-
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         ((NotesListFragment) getSupportFragmentManager()
@@ -309,4 +298,36 @@ public class NotesListActivity extends ActionBarActivity
 
     }
 
+
+    public class SampleItem {
+        public String tag;
+        public boolean title;
+        public SampleItem(String tag, boolean title) {
+            this.tag = tag;
+            this.title = title;
+        }
+    }
+
+    public class SampleAdapter extends ArrayAdapter<SampleItem> {
+
+        public SampleAdapter(Context context) {
+            super(context, 0);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                if (this.getItem(position).title) {
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_row_title, null);
+                } else {
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_row, null);
+                }
+            }
+
+            TextView title = (TextView) convertView.findViewById(android.R.id.text1);
+            title.setText(getItem(position).tag);
+
+            return convertView;
+        }
+
+    }
 }

@@ -26,4 +26,5 @@
     <string name="showcase_note_message">Press the + button to add a note. Slide from the left to
         view note categories.
     </string>
+    <string name="menu_category">Add category</string>
 </resources>

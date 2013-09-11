@@ -30,7 +30,7 @@ public class CategoriesListFragment extends ListFragment {
         setListAdapter(adapter);
     }
 
-    private class SampleItem {
+    public class SampleItem {
         public String tag;
         public int iconRes;
         public SampleItem(String tag, int iconRes) {

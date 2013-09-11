@@ -39,9 +39,13 @@ public class NotesDbAdapter {
         "create table gen (_id integer primary key autoincrement, "
         + "title text not null, body text not null, cat_id integer);";
 
+    private static final String DATABASE_CATEGORIES_CREATE =
+            "create table categories (_id integer primary key autoincrement, "
+                    + "title text not null);";
+
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "gen";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private final Context mCtx;
 
@@ -58,7 +62,6 @@ public class NotesDbAdapter {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -66,8 +69,9 @@ public class NotesDbAdapter {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS gen");
-            onCreate(db);
+            //db.execSQL("DROP TABLE IF EXISTS gen");
+            //onCreate(db);
+            db.execSQL(DATABASE_CATEGORIES_CREATE);
         }
     }
 
@@ -119,6 +123,15 @@ public class NotesDbAdapter {
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 
+    public long createNote(String title, String body, int catId) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_TITLE, title);
+        initialValues.put(KEY_BODY, body);
+        initialValues.put(KEY_CATID, catId);
+
+        return mDb.insert(DATABASE_TABLE, null, initialValues);
+    }
+
     /**
      * Delete the note with the given rowId
      * 
@@ -131,12 +144,23 @@ public class NotesDbAdapter {
     }
 
     /**
-     * Return a Cursor over the list of all gen in the database
+     * Return a Cursor over the list of all notes in the database
      * 
-     * @return Cursor over all gen
-     */
+     * @return Cursor over all notes
+     * */
     public Cursor fetchAllNotes() {
 
+        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
+                KEY_BODY}, null, null, null, null, null);
+    }
+
+    /**
+     * Return a Cursor over the list of all notes in a category
+     *
+     * @param catId id of the category
+     * @return Cursor over all notes in that category
+     * */
+    public Cursor fetchNotes(int catId) {
         return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
                 KEY_BODY}, null, null, null, null, null);
     }

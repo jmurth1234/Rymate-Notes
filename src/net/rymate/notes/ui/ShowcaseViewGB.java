@@ -14,6 +14,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v7.app.ActionBarActivity;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -214,11 +215,11 @@ public class ShowcaseViewGB extends RelativeLayout implements View.OnClickListen
         invalidate();
     }
 
-    public void setShowcaseItem(final int itemType, final int actionItemId, final Activity activity) {
+    public void setShowcaseItem(final int itemType, final int actionItemId, final ActionBarActivity activity) {
         post(new Runnable() {
             @Override
             public void run() {
-                View homeButton = activity.findViewById(R.id.home);
+                View homeButton = activity.findViewById(android.R.id.home);
                 if (homeButton == null) {
                     // Thanks to @hameno for this
                     int homeId = activity.getResources().getIdentifier("abs__home", "id", activity.getPackageName());
@@ -770,7 +771,7 @@ public class ShowcaseViewGB extends RelativeLayout implements View.OnClickListen
      * @param options    A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
      */
-    public static ShowcaseViewGB insertShowcaseViewWithType(int type, int itemId, Activity activity, String title, String detailText, ConfigOptions options) {
+    public static ShowcaseViewGB insertShowcaseViewWithType(int type, int itemId, ActionBarActivity activity, String title, String detailText, ConfigOptions options) {
         ShowcaseViewGB sv = new ShowcaseViewGB(activity);
         if (options != null)
             sv.setConfigOptions(options);
@@ -795,7 +796,7 @@ public class ShowcaseViewGB extends RelativeLayout implements View.OnClickListen
      * @param options    A set of options to customise the ShowcaseViewGB
      * @return the created ShowcaseViewGB instance
      */
-    public static ShowcaseViewGB insertShowcaseViewWithType(int type, int itemId, Activity activity, int title, int detailText, ConfigOptions options) {
+    public static ShowcaseViewGB insertShowcaseViewWithType(int type, int itemId, ActionBarActivity activity, int title, int detailText, ConfigOptions options) {
         ShowcaseViewGB sv = new ShowcaseViewGB(activity);
         if (options != null)
             sv.setConfigOptions(options);
