@@ -9,7 +9,7 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="48dp">
 
         <EditText
                 android:id="@+id/title"
@@ -20,6 +20,12 @@
                 android:layout_weight="1"
                 android:typeface="normal"
                 android:hint="@string/title"/>
+
+        <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:id="@+id/spinner"/>
+
     </LinearLayout>
 
     <ScrollView

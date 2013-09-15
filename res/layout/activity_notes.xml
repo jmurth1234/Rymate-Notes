@@ -15,7 +15,8 @@
               tools:context=".activities.NotesListActivity"
               tools:layout="@android:layout/list_content" />
     <!-- The navigation drawer -->
-    <ListView android:id="@+id/left_drawer"
+    <ListView
+              android:id="@+id/left_drawer"
               android:layout_width="300dp"
               android:layout_height="match_parent"
               android:layout_gravity="start"

@@ -27,4 +27,5 @@
         view note categories.
     </string>
     <string name="menu_category">Add category</string>
+    <string name="new_category">Name the category!</string>
 </resources>

@@ -3,12 +3,14 @@ package net.rymate.notes.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.rymate.notes.R;
+import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.database.NotesDbAdapter;
 
@@ -55,6 +57,11 @@ public class NoteViewFragment extends Fragment {
             getActivity().startManagingCursor(note);
             mBodyText.setText(note.getString(
                     note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY)));
+            if (getActivity().getClass() == NoteViewActivity.class) {
+                NoteViewActivity activity = (NoteViewActivity) getActivity();
+                activity.getSupportActionBar().setTitle(note.getString(
+                        note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
+            }
         }
 
         return rootView;

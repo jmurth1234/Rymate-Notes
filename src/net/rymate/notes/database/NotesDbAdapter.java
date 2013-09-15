@@ -45,7 +45,7 @@ public class NotesDbAdapter {
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "gen";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private final Context mCtx;
 
@@ -63,6 +63,9 @@ public class NotesDbAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(DATABASE_CREATE);
+            db.execSQL(DATABASE_CATEGORIES_CREATE);
+            addCategory("All Notes", db);
+            addCategory("Uncategorised", db);
         }
 
         @Override
@@ -72,6 +75,15 @@ public class NotesDbAdapter {
             //db.execSQL("DROP TABLE IF EXISTS gen");
             //onCreate(db);
             db.execSQL(DATABASE_CATEGORIES_CREATE);
+            addCategory("All Notes", db);
+            addCategory("Uncategorised", db);
+        }
+
+        public long addCategory(String title, SQLiteDatabase db) {
+            ContentValues initialValues = new ContentValues();
+            initialValues.put(KEY_TITLE, title);
+
+            return db.insert("categories", null, initialValues);
         }
     }
 
@@ -133,6 +145,20 @@ public class NotesDbAdapter {
     }
 
     /**
+     * Create a new category using the title provided.
+     *
+     * @param title the category name
+     * @return rowId or -1 if failed
+     */
+    public long addCategory(String title) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_TITLE, title);
+
+        return mDb.insert("categories", null, initialValues);
+    }
+
+
+    /**
      * Delete the note with the given rowId
      * 
      * @param rowId id of note to delete
@@ -162,12 +188,13 @@ public class NotesDbAdapter {
      * */
     public Cursor fetchNotes(int catId) {
         return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
-                KEY_BODY}, null, null, null, null, null);
+                KEY_BODY}, KEY_CATID + " = " + catId, null, null, null, null);
     }
 
     /**
      * Return a Cursor positioned at the note that matches the given rowId
-     * 
+     *
+     *
      * @param rowId id of note to retrieve
      * @return Cursor positioned to matching note, if found
      * @throws SQLException if note could not be found/retrieved
@@ -177,12 +204,36 @@ public class NotesDbAdapter {
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-                    KEY_TITLE, KEY_BODY}, KEY_ROWID + "=" + rowId, null,
+                    KEY_TITLE, KEY_BODY, KEY_CATID}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
         return mCursor;
+
+    }
+
+    /**
+     * Return a Cursor over the list of all categories in the database
+     *
+     * @return Cursor over all notes
+     * */
+    public Cursor fetchCategories() {
+
+        return mDb.query("categories", new String[] {KEY_ROWID, KEY_TITLE}
+                , null, null, null, null, null);
+
+    }
+
+    /**
+     * Return a Cursor over the list of nearly all categories in the database
+     *
+     * @return Cursor over all notes
+     * */
+    public Cursor fetchNearlyAllCategories() {
+
+        return mDb.query("categories", new String[] {KEY_ROWID, KEY_TITLE}
+                , KEY_ROWID + " NOT LIKE '%" + 1 + "%'", null, null, null, null);
 
     }
 
@@ -194,12 +245,14 @@ public class NotesDbAdapter {
      * @param rowId id of note to update
      * @param title value to set note title to
      * @param body value to set note body to
+     * @param category value of the new category
      * @return true if the note was successfully updated, false otherwise
      */
-    public boolean updateNote(long rowId, String title, String body) {
+    public boolean updateNote(long rowId, String title, String body, int category) {
         ContentValues args = new ContentValues();
         args.put(KEY_TITLE, title);
         args.put(KEY_BODY, body);
+        args.put(KEY_CATID, category);
 
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }

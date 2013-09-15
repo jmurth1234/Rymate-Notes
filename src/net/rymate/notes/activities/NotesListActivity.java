@@ -1,9 +1,14 @@
 package net.rymate.notes.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -11,27 +16,34 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
-import net.rymate.notes.fragments.CategoriesListFragment;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.DrawerToggle;
 import net.rymate.notes.ui.ShowcaseViewGB;
+import net.rymate.notes.ui.UIUtils;
+
+import java.util.HashMap;
 
 /**
  * Created by Ryan on 05/07/13.
@@ -52,6 +64,7 @@ public class NotesListActivity extends ActionBarActivity
     private ListView mDrawerList;
     private ShowcaseViewGB sv;
     private SharedPreferences pref;
+    private NotesDbAdapter mDbHelper;
 
 
     @Override
@@ -74,7 +87,6 @@ public class NotesListActivity extends ActionBarActivity
         }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // the layout
-        mDrawerList = (ListView) findViewById(R.id.left_drawer); // list of categories
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -107,16 +119,14 @@ public class NotesListActivity extends ActionBarActivity
 
         pref = getSharedPreferences("rymatenotesprefs", MODE_PRIVATE);
 
-        SampleAdapter adapter = new SampleAdapter(getApplicationContext());
-        adapter.add(new SampleItem("Notes", true));
-        adapter.add(new SampleItem("All Notes", false));
-        adapter.add(new SampleItem("Uncategorised", false));
-        adapter.add(new SampleItem("Categories", true));
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        for (int i = 1; i < 21; i++) {
-            adapter.add(new SampleItem("Dummy Category " + i, false));
-        }
-        mDrawerList.setAdapter(adapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        mDbHelper = new NotesDbAdapter(this);
+        mDbHelper.open();
+
+        getCategories();
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
@@ -157,20 +167,21 @@ public class NotesListActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
-        if(pref.getBoolean("firststart", true)) {
-
+        if (pref.getBoolean("firststart", true)) {
             // update sharedpreference - another start wont be the first
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("firststart", false);
             editor.commit(); // apply changes
+            if (UIUtils.hasHoneycomb()) {
+                // fancy 3.0+ welcome view
+                ShowcaseViewGB.ConfigOptions co = new ShowcaseViewGB.ConfigOptions();
+                co.hideOnClickOutside = true;
 
-            // fancy 3.0+ welcome view
-            ShowcaseViewGB.ConfigOptions co = new ShowcaseViewGB.ConfigOptions();
-            co.hideOnClickOutside = true;
+                sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
+                        R.string.showcase_note_title, R.string.showcase_note_message, co);
+                sv.show();
 
-            sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
-                    R.string.showcase_note_title, R.string.showcase_note_message, co);
-            sv.show();
+            }
         }
         return true;
     }
@@ -252,6 +263,26 @@ public class NotesListActivity extends ActionBarActivity
                 ((NotesListFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.note_list))
                         .showDeleteDialog(mRowId);
+            case R.id.new_category:
+                final EditText input = new EditText(this);
+                input.setHint(R.string.new_category);
+                input.setSingleLine();
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.menu_category)
+                        .setView(input)
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Editable value = input.getText();
+                                if (value.toString().length() != 0) {
+                                    mDbHelper.addCategory(value.toString());
+                                }
+                                getCategories();
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
+                            }
+                }).show();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -280,6 +311,42 @@ public class NotesListActivity extends ActionBarActivity
         return mRowId;
     }
 
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    /** Swaps fragments in the main content view */
+    private void selectItem(int position) {
+        ((NotesListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.note_list))
+                .fillData(position);
+
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+
+    public void getCategories() {
+        Cursor catCursor = mDbHelper.fetchCategories();
+        startManagingCursor(catCursor);
+
+        // Create an array to specify the fields we want to display in the list
+        String[] from = new String[]{NotesDbAdapter.KEY_TITLE};
+
+        // and an array of the fields we want to bind those fields to (in this case just text1)
+        int[] to = new int[]{android.R.id.text1};
+
+        // Now create a simple cursor adapter and set it to display
+        SimpleCursorAdapter cat =
+                new SimpleCursorAdapter(this, R.layout.category_row, catCursor, from, to);
+
+        if (mDrawerList != null) {
+            mDrawerList.setAdapter(cat);
+        }
+    }
+
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         ((NotesListFragment) getSupportFragmentManager()
@@ -295,39 +362,6 @@ public class NotesListActivity extends ActionBarActivity
         ((NotesListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.note_list))
                 .onDialogNegativeClick(dialog);
-
-    }
-
-
-    public class SampleItem {
-        public String tag;
-        public boolean title;
-        public SampleItem(String tag, boolean title) {
-            this.tag = tag;
-            this.title = title;
-        }
-    }
-
-    public class SampleAdapter extends ArrayAdapter<SampleItem> {
-
-        public SampleAdapter(Context context) {
-            super(context, 0);
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                if (this.getItem(position).title) {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_row_title, null);
-                } else {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_row, null);
-                }
-            }
-
-            TextView title = (TextView) convertView.findViewById(android.R.id.text1);
-            title.setText(getItem(position).tag);
-
-            return convertView;
-        }
 
     }
 }

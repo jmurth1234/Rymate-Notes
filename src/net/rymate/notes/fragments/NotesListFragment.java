@@ -2,6 +2,7 @@ package net.rymate.notes.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.MergeCursor;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -93,6 +94,37 @@ public class NotesListFragment extends ListFragment
         // Now create a simple cursor adapter and set it to display
         SimpleCursorAdapter notes =
                 new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
+        setListAdapter(notes);
+    }
+
+    public void fillData(int catId) {
+        Cursor notesCursor;
+        if (catId == 0) {
+            //  get ALL THE NOTES
+            notesCursor = mDbHelper.fetchAllNotes();
+        } else if (catId == 1) {
+            // get ALL the notes that are not in a category
+            Cursor notesCursor1 = mDbHelper.fetchNotes(0);
+            Cursor notesCursor2 = mDbHelper.fetchNotes(1);
+            Cursor[] notesCursor12 = {notesCursor1, notesCursor2};
+
+            notesCursor = new MergeCursor(notesCursor12);
+        } else {
+            // get ALL the notes in a category
+            notesCursor = mDbHelper.fetchNotes(catId);
+        }
+        this.getActivity().startManagingCursor(notesCursor);
+
+        // Create an array to specify the fields we want to display in the list
+        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.getSample()};
+
+        // and an array of the fields we want to bind those fields to (in this case just text1)
+        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
+
+        // Now create a simple cursor adapter and set it to display
+        SimpleCursorAdapter notes =
+                new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
+
         setListAdapter(notes);
     }
 

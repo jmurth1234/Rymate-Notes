@@ -25,7 +25,7 @@
                  android:mode="twoLine"
                  android:clickable="false">
 
-    <TextView
+    <net.rymate.notes.ui.RobotoLightTextView
             android:id="@android:id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
 
-    <TextView
+    <net.rymate.notes.ui.RobotoLightItalicsTextView
             android:id="@android:id/text2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
@@ -26,6 +28,8 @@ public class NoteEditFragment extends Fragment {
     private Long mRowId;
     private NotesDbAdapter mDbHelper;
     private boolean newNote;
+    private Spinner mCategorySpinner;
+    private Long mCatId;
 
     public NoteEditFragment(boolean b) {
         this.newNote = b;
@@ -62,6 +66,7 @@ public class NoteEditFragment extends Fragment {
 
         mTitleText = (EditText) rootView.findViewById(R.id.title);
         mBodyText = (EditText) rootView.findViewById(R.id.note_body);
+        mCategorySpinner = (Spinner) rootView.findViewById(R.id.spinner);
 
         populateFields();
 
@@ -69,14 +74,44 @@ public class NoteEditFragment extends Fragment {
     }
 
     private void populateFields() {
+        Cursor note;
+
+        Cursor catCursor = mDbHelper.fetchNearlyAllCategories();
+        getActivity().startManagingCursor(catCursor);
+
+        // Create an array to specify the fields we want to display in the list
+        String[] from = new String[]{NotesDbAdapter.KEY_TITLE};
+
+        // and an array of the fields we want to bind those fields to (in this case just text1)
+        int[] to = new int[]{android.R.id.text1};
+
+        // Now create a simple cursor adapter and set it to display
+        SimpleCursorAdapter cat =
+                new SimpleCursorAdapter(this.getActivity(), R.layout.category_row, catCursor, from, to);
+
+        mCategorySpinner.setAdapter(cat);
+
         if (mRowId != null) {
-            Cursor note = mDbHelper.fetchNote(mRowId);
+            note = mDbHelper.fetchNote(mRowId);
             getActivity().startManagingCursor(note);
 
             mTitleText.setText(note.getString(
                     note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
             mBodyText.setText(note.getString(
                     note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY)));
+
+            int category = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
+
+            Context context = getActivity().getApplicationContext();
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, "category:" + category, duration);
+            toast.show();
+
+            if ((category == 0) || (category == 1)) {
+                mCategorySpinner.setSelection(0);
+            } else {
+                mCategorySpinner.setSelection(category - 1);
+            }
 
         }
     }
@@ -109,11 +144,12 @@ public class NoteEditFragment extends Fragment {
     public void saveState() {
         String title = mTitleText.getText().toString();
         String body = mBodyText.getText().toString();
+        int category = mCategorySpinner.getSelectedItemPosition() + 1;
         boolean saved;
 
-        if (!body.isEmpty()) {
+        if (body.length() != 0) {
             if (mRowId == null) {
-                long id = mDbHelper.createNote(title, body);
+                long id = mDbHelper.createNote(title, body, category);
                 if (id > 0) {
                     mRowId = id;
                     saved = true;
@@ -121,7 +157,7 @@ public class NoteEditFragment extends Fragment {
                     saved = false;
                 }
             } else {
-                saved = mDbHelper.updateNote(mRowId, title, body);
+                saved = mDbHelper.updateNote(mRowId, title, body, category);
             }
 
             Context context = getActivity().getApplicationContext();
