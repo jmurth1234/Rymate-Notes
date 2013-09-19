@@ -102,11 +102,6 @@ public class NoteEditFragment extends Fragment {
 
             int category = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
 
-            Context context = getActivity().getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, "category:" + category, duration);
-            toast.show();
-
             if ((category == 0) || (category == 1)) {
                 mCategorySpinner.setSelection(0);
             } else {
