@@ -40,7 +40,6 @@ import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.DrawerToggle;
-import net.rymate.notes.ui.ShowcaseViewGB;
 import net.rymate.notes.ui.UIUtils;
 
 import java.util.HashMap;
@@ -62,7 +61,7 @@ public class NotesListActivity extends ActionBarActivity
     private DrawerLayout mDrawerLayout;
     private DrawerToggle mDrawerToggle;
     private ListView mDrawerList;
-    private ShowcaseViewGB sv;
+    private ShowcaseView sv;
     private SharedPreferences pref;
     private NotesDbAdapter mDbHelper;
 
@@ -174,10 +173,10 @@ public class NotesListActivity extends ActionBarActivity
             editor.commit(); // apply changes
             if (UIUtils.hasHoneycomb()) {
                 // fancy 3.0+ welcome view
-                ShowcaseViewGB.ConfigOptions co = new ShowcaseViewGB.ConfigOptions();
+                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
                 co.hideOnClickOutside = true;
 
-                sv = ShowcaseViewGB.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
+                sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_ITEM, R.id.new_note, this,
                         R.string.showcase_note_title, R.string.showcase_note_message, co);
                 sv.show();
 

@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NoteViewActivity"/>
+        <activity android:name=".activities.NoteViewActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".activities.NoteEditActivity"
                   android:windowSoftInputMode="stateVisible|adjustResize"
                   android:configChanges="orientation|keyboardHidden|screenSize" />

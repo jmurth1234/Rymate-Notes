@@ -17,5 +17,5 @@
               tools:context="fragments.NotesViewFragment"
               android:longClickable="true"
               android:background="#00000000"
-              android:editable="false" />
+              android:inputType="textMultiLine|textCapSentences|textAutoCorrect" />
 </ScrollView>

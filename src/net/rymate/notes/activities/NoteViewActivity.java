@@ -2,12 +2,15 @@ package net.rymate.notes.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -24,9 +27,10 @@ import net.rymate.notes.fragments.NoteViewFragment;
  * Created by Ryan on 05/07/13.
  */
 public class NoteViewActivity extends ActionBarActivity
-        implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener, NoteViewFragment.NoteViewListener {
 
     Long mRowId;
+    private NoteViewFragment nvf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,19 @@ public class NoteViewActivity extends ActionBarActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.noteview_menu_phone, menu);
 
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (nvf == null) {
+            return true;
+        }
+        if (nvf.isEditing()) {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.edit_activity, menu);
+        }
         return true;
     }
 
@@ -134,6 +151,20 @@ public class NoteViewActivity extends ActionBarActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
+
+    }
+
+    @Override
+    public void onStartedEditing(NoteViewFragment n) {
+        nvf = n;
+        nvf.setEditing(true);
+        supportInvalidateOptionsMenu();
+        getSupportActionBar().setTitle("Editing");
+        getSupportActionBar().setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#0099CC")));
+    }
+
+    @Override
+    public void onFinishedEditing(NoteViewFragment n) {
 
     }
 }
