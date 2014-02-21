@@ -27,7 +27,7 @@ import net.rymate.notes.ui.UIUtils;
  * Created by Ryan on 05/07/13.
  */
 public class NoteViewActivity extends FragmentActivity
-        implements DeleteNoteDialogFragment.DeleteNoteDialogListener, NoteViewFragment.NoteViewListener {
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;
     private NoteViewFragment nvf;
@@ -151,22 +151,6 @@ public class NoteViewActivity extends FragmentActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
-
-    }
-
-    @Override
-    public void onStartedEditing(NoteViewFragment n) {
-        nvf = n;
-        nvf.setEditing(true);
-        invalidateOptionsMenu();
-        getActionBar().setTitle("Editing");
-        if(UIUtils.hasICS()) {
-            getActionBar().setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#0099CC")));
-        }
-    }
-
-    @Override
-    public void onFinishedEditing(NoteViewFragment n) {
 
     }
 }

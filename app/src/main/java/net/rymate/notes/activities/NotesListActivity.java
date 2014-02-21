@@ -52,7 +52,7 @@ import java.util.HashMap;
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends FragmentActivity
-        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener, NoteViewFragment.NoteViewListener {
+        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -101,7 +101,8 @@ public class NotesListActivity extends FragmentActivity
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        if (UIUtils.hasICS())
+            getActionBar().setHomeButtonEnabled(true);
 
         mDrawerToggle = new DrawerToggle(
                 this,                  /* host Activity */
@@ -325,18 +326,11 @@ public class NotesListActivity extends FragmentActivity
         startActivity(detailIntent);
     }
 
-    @Override
-    public void onStartedEditing(NoteViewFragment n) {
 
-    }
-
-    @Override
-    public void onFinishedEditing(NoteViewFragment n) {
-
-    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
+
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             selectItem(position);
         }

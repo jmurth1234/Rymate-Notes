@@ -27,7 +27,6 @@ import net.rymate.notes.database.NotesDbAdapter;
 public class NoteViewFragment extends Fragment {
 
     public static Long mRowId;
-    NoteViewListener mListener;
     boolean nope = false;
     private EditText mBodyText;
     private NotesDbAdapter mDbHelper;
@@ -101,15 +100,6 @@ public class NoteViewFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Verify that the host activity implements the callback interface
-        try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (NoteViewListener) activity;
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.toString()
-                    + " must implement NoteViewListener");
-        }
     }
 
     @Override
@@ -185,12 +175,6 @@ public class NoteViewFragment extends Fragment {
 
     public void setEditing(boolean editing) {
         this.editing = editing;
-    }
-
-    public interface NoteViewListener {
-        public void onStartedEditing(NoteViewFragment n);
-
-        public void onFinishedEditing(NoteViewFragment n);
     }
 
 }
