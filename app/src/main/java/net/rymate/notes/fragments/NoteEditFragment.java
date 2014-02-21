@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,8 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.commonsware.cwac.richedit.RichEditText;
 
 import net.rymate.notes.R;
 
@@ -24,7 +28,7 @@ import net.rymate.notes.database.NotesDbAdapter;
 public class NoteEditFragment extends Fragment {
 
     private EditText mTitleText;
-    private EditText mBodyText;
+    private RichEditText mBodyText;
     private Long mRowId;
     private NotesDbAdapter mDbHelper;
     private boolean newNote;
@@ -65,8 +69,9 @@ public class NoteEditFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_note_edit, container, false);
 
         mTitleText = (EditText) rootView.findViewById(R.id.title);
-        mBodyText = (EditText) rootView.findViewById(R.id.note_body);
+        mBodyText = (RichEditText) rootView.findViewById(R.id.note_body);
         mCategorySpinner = (Spinner) rootView.findViewById(R.id.spinner);
+        mBodyText.enableActionModes(true);
 
         populateFields();
 
@@ -97,8 +102,8 @@ public class NoteEditFragment extends Fragment {
 
             mTitleText.setText(note.getString(
                     note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
-            mBodyText.setText(note.getString(
-                    note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY)));
+            mBodyText.setText(Html.fromHtml(note.getString(
+                    note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY))));
 
             int category = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
 
@@ -138,13 +143,14 @@ public class NoteEditFragment extends Fragment {
 
     public void saveState() {
         String title = mTitleText.getText().toString();
-        String body = mBodyText.getText().toString();
+        Editable body = mBodyText.getText();
+        String bodyText = Html.toHtml(body);
         int category = mCategorySpinner.getSelectedItemPosition() + 1;
         boolean saved;
 
         if (body.length() != 0) {
             if (mRowId == null) {
-                long id = mDbHelper.createNote(title, body, category);
+                long id = mDbHelper.createNote(title, bodyText, category);
                 if (id > 0) {
                     mRowId = id;
                     saved = true;
@@ -152,7 +158,7 @@ public class NoteEditFragment extends Fragment {
                     saved = false;
                 }
             } else {
-                saved = mDbHelper.updateNote(mRowId, title, body, category);
+                saved = mDbHelper.updateNote(mRowId, title, bodyText, category);
             }
 
             Context context = getActivity().getApplicationContext();

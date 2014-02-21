@@ -26,6 +26,6 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:19.0.1'
     compile 'com.github.manuelpeinado.glassactionbar:glassactionbar:0.3.0'
-
+    compile project(':RichEditText')
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }

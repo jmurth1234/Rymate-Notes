@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -125,7 +127,8 @@ public class NoteViewFragment extends Fragment {
             Cursor note = mDbHelper.fetchNote(mRowId);
             getActivity().startManagingCursor(note);
             noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
-            mBodyText.setText(noteText);
+            Spanned formattedBody = Html.fromHtml(noteText);
+            mBodyText.setText(formattedBody);
             if (getActivity().getClass() == NoteViewActivity.class) {
                 NoteViewActivity activity = (NoteViewActivity) getActivity();
                 activity.getActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));

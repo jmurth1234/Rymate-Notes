@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/cwac_richedittext_normal"
+		android:showAsAction="always|withText"
+		android:title="@string/normal">
+	</item>
+  <item
+    android:id="@+id/cwac_richedittext_center"
+    android:showAsAction="always|withText"
+    android:title="@string/center">
+  </item>
+	 <item
+    android:id="@+id/cwac_richedittext_opposite"
+    android:showAsAction="always|withText"
+    android:title="@string/opposite">
+  </item>
+  
+</menu>

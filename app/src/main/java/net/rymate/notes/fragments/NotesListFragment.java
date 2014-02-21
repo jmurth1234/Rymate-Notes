@@ -11,11 +11,11 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
+import net.rymate.notes.database.SimpleCursorAdapter;
 
 /**
  * Created by Ryan on 04/07/13.
@@ -116,7 +116,7 @@ public class NotesListFragment extends ListFragment
         this.getActivity().startManagingCursor(notesCursor);
 
         // Create an array to specify the fields we want to display in the list
-        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.getSample()};
+        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
 
         // and an array of the fields we want to bind those fields to (in this case just text1)
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};

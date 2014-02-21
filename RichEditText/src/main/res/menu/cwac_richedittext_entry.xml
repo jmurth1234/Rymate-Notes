@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@android:id/cut"
+		android:title="@android:string/cut">
+	</item>
+	<item
+		android:id="@android:id/copy"
+		android:title="@android:string/copy">
+	</item>
+	<item
+		android:id="@android:id/paste"
+		android:title="@android:string/paste">
+	</item>
+	<item
+		android:id="@+id/cwac_richedittext_format"
+		android:showAsAction="always|withText"
+		android:title="@string/format">
+	</item>
+
+</menu>
