@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light"></style>
+
+    <style name="AppTheme.TranslucentActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarStyle">@style/TranslucentActionBar</item>
+    </style>
+
+    <style name="TranslucentActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">#11f3f3f3</item>
+    </style>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:gravity="center">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <net.rymate.notes.ui.RobotoLightTextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/showcase_note_title"
+            class="net.rymate.notes.ui.RobotoLightTextView"
+            android:id="@+id/view"
+            android:textSize="48dp"
+            android:paddingBottom="8dp" />
+
+        <net.rymate.notes.ui.RobotoLightItalicsTextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/no_notes_1"
+            class="net.rymate.notes.ui.RobotoLightItalicsTextView"
+            android:id="@+id/no_notes_1"
+            android:textSize="24dp"
+            android:paddingBottom="8dp" />
+
+        <net.rymate.notes.ui.RobotoLightItalicsTextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/no_notes_2"
+            class="net.rymate.notes.ui.RobotoLightItalicsTextView"
+            android:id="@+id/no_notes_2"
+            android:textSize="24dp"
+            android:textColor="#0099CC"
+            android:linksClickable="true"
+            android:onClick="onClick"
+            android:clickable="true"/>
+    </LinearLayout>
+
+</LinearLayout>
