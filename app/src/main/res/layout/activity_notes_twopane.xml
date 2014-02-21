@@ -20,15 +20,12 @@
             android:orientation="horizontal"
             android:showDividers="middle">
 
-        <fragment
-                android:id="@+id/note_list"
-                android:name="net.rymate.notes.fragments.NotesListFragment"
+        <FrameLayout
+                android:id="@+id/note_list_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginLeft="4dp"
-                tools:context=".activities.NotesListActivity"
-                tools:layout="@android:layout/list_content"/>
+                android:layout_marginLeft="4dp"/>
 
         <FrameLayout
                 android:id="@+id/note_container"

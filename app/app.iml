@@ -72,6 +72,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="glassactionbar-0.3.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.0.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-4.0.30" level="project" />
     <orderEntry type="module" module-name="RichEditText" exported="" />
   </component>
 </module>

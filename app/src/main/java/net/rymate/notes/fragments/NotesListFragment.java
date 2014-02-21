@@ -9,9 +9,19 @@ import android.support.v4.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.commonsware.cwac.richedit.RichEditText;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
@@ -20,8 +30,8 @@ import net.rymate.notes.database.SimpleCursorAdapter;
 /**
  * Created by Ryan on 04/07/13.
  */
-public class NotesListFragment extends ListFragment
-        implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
+public class NotesListFragment extends Fragment
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener, ListView.OnItemClickListener {
 
     /**
      * The serialization key representing the selected note.
@@ -45,7 +55,13 @@ public class NotesListFragment extends ListFragment
      */
     private NotesDbAdapter mDbHelper;
 
+    private ListView mNoteslist;
+
     private long noteId;
+
+    public ListView getListView() {
+        return mNoteslist;
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -77,8 +93,23 @@ public class NotesListFragment extends ListFragment
 
         mDbHelper = new NotesDbAdapter(this.getActivity());
         mDbHelper.open();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Look up the AdView as a resource and load a request.
+        AdView adView = (AdView) rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("FCB92DFAA64AEF3CDC672B529A31516A").build();
+        adView.loadAd(adRequest);
+
+        mNoteslist = (ListView) rootView.findViewById(R.id.listView);
+        mNoteslist.setOnItemClickListener(this);
         fillData();
 
+        return rootView;
     }
 
     public void fillData() {
@@ -95,6 +126,10 @@ public class NotesListFragment extends ListFragment
         SimpleCursorAdapter notes =
                 new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
         setListAdapter(notes);
+    }
+
+    private void setListAdapter(SimpleCursorAdapter notes) {
+        mNoteslist.setAdapter(notes);
     }
 
     public void fillData(int catId) {
@@ -161,15 +196,6 @@ public class NotesListFragment extends ListFragment
     }
 
     @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(id);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
@@ -198,6 +224,14 @@ public class NotesListFragment extends ListFragment
         }
 
         mActivatedPosition = position;
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+        mCallbacks.onItemSelected(l);
     }
 
     public void showDeleteDialog(long noteId) {

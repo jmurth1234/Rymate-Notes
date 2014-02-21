@@ -1,37 +1,28 @@
 package net.rymate.notes.activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.MergeCursor;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
 import android.text.Editable;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
@@ -43,17 +34,14 @@ import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.DrawerToggle;
 import net.rymate.notes.ui.UIUtils;
 
-import android.graphics.Typeface;
-
-
-import java.util.HashMap;
-
 /**
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends FragmentActivity
         implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener {
 
+    public static Typeface ROBOTO_LIGHT;
+    public static Typeface ROBOTO_LIGHT_ITALICS;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -67,10 +55,8 @@ public class NotesListActivity extends FragmentActivity
     private ListView mDrawerList;
     private SharedPreferences pref;
     private NotesDbAdapter mDbHelper;
-
-    public static Typeface ROBOTO_LIGHT;
-    public static Typeface ROBOTO_LIGHT_ITALICS;
-
+    private NotesListFragment list;
+    private LinearLayout mDrawerLinear;
 
 
     @Override
@@ -82,6 +68,13 @@ public class NotesListActivity extends FragmentActivity
 
         setContentView(R.layout.activity_notes);
 
+        list = new NotesListFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.note_list_container, list)
+                .commit();
+
+
         if (findViewById(R.id.note_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
@@ -92,11 +85,11 @@ public class NotesListActivity extends FragmentActivity
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
             FragmentManager fm = getSupportFragmentManager();
-            ((NotesListFragment) fm.findFragmentById(R.id.note_list))
-                    .setActivateOnItemClick(true);
+            list.setActivateOnItemClick(true);
         }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // the layout
+        mDrawerLinear = (LinearLayout) findViewById(R.id.left_drawer);
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -130,7 +123,7 @@ public class NotesListActivity extends FragmentActivity
 
         pref = getSharedPreferences("rymatenotesprefs", MODE_PRIVATE);
 
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList = (ListView) findViewById(R.id.cat_list);
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -140,13 +133,12 @@ public class NotesListActivity extends FragmentActivity
         if (mDbHelper.fetchAllNotes().getCount() == 0) {
             IntroFragment fragment = new IntroFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.note_list, fragment)
+                    .replace(R.id.note_list_container, fragment)
                     .commit();
 
         }
 
         getCategories();
-
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
@@ -269,9 +261,7 @@ public class NotesListActivity extends FragmentActivity
                 supportInvalidateOptionsMenu();
                 return true;
             case R.id.delete_note:
-                ((NotesListFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.note_list))
-                        .showDeleteDialog(mRowId);
+                list.showDeleteDialog(mRowId);
             case R.id.new_category:
                 final EditText input = new EditText(this);
                 input.setHint(R.string.new_category);
@@ -288,9 +278,9 @@ public class NotesListActivity extends FragmentActivity
                                 getCategories();
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
                 }).show();
             default:
                 return super.onOptionsItemSelected(item);
@@ -326,25 +316,14 @@ public class NotesListActivity extends FragmentActivity
         startActivity(detailIntent);
     }
 
-
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-    /** Swaps fragments in the main content view */
+    /**
+     * Swaps fragments in the main content view
+     */
     private void selectItem(int position) {
-        ((NotesListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.note_list))
-                .fillData(position);
+        list.fillData(position);
 
-        mDrawerLayout.closeDrawer(mDrawerList);
+        mDrawerLayout.closeDrawer(mDrawerLinear);
     }
-
 
     public void getCategories() {
         Cursor catCursor = mDbHelper.fetchCategories();
@@ -367,9 +346,7 @@ public class NotesListActivity extends FragmentActivity
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        ((NotesListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.note_list))
-                .onDialogPositiveClick(dialog);
+        list.onDialogPositiveClick(dialog);
         ((NoteViewFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.note_container))
                 .setText("");
@@ -377,9 +354,14 @@ public class NotesListActivity extends FragmentActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        ((NotesListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.note_list))
-                .onDialogNegativeClick(dialog);
+        list.onDialogNegativeClick(dialog);
+    }
 
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 }
