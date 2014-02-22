@@ -2,9 +2,11 @@ package net.rymate.notes.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -34,6 +36,13 @@ public class NoteViewActivity extends FragmentActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPref.getString("theme_list", "").equals("Dark")) {
+            setTheme(R.style.AppDarkTheme_DarkTranslucentActionBar);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
 
