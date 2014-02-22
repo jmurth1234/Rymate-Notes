@@ -2,6 +2,7 @@ package net.rymate.notes.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.MergeCursor;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -100,10 +101,15 @@ public class NotesListFragment extends Fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        if(isPackageInstalled("net.rymate.rymatenotesdonate", getActivity())) {
+            AdView adView = (AdView) rootView.findViewById(R.id.adView);
+            adView.destroy();
+        } else {
         // Look up the AdView as a resource and load a request.
         AdView adView = (AdView) rootView.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("FCB92DFAA64AEF3CDC672B529A31516A").build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("D39052E7A071396A79885654978FE668").addTestDevice("B32AA77C2C97BEB587AE4DB21C419AD2").build();
         adView.loadAd(adRequest);
+        }
 
         mNoteslist = (ListView) rootView.findViewById(R.id.listView);
         mNoteslist.setOnItemClickListener(this);
@@ -211,9 +217,15 @@ public class NotesListFragment extends Fragment
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
+        ListView v = getListView();
+        if (v == null) {
+            return;
+        }
+        if (activateOnItemClick) {
+            v.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        } else {
+            v.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        }
     }
 
     private void setActivatedPosition(int position) {
@@ -268,5 +280,15 @@ public class NotesListFragment extends Fragment
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
 
+    }
+
+    private boolean isPackageInstalled(String packagename, Context context) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }

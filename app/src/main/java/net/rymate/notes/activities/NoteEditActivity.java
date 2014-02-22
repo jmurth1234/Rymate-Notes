@@ -1,7 +1,9 @@
 package net.rymate.notes.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
@@ -21,6 +23,12 @@ public class NoteEditActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPref.getString("theme_list", "").equals("Dark")) {
+            setTheme(R.style.AppDarkTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
 

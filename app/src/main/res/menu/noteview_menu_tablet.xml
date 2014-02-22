@@ -14,4 +14,7 @@
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menu_delete"
         android:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/settings"
+        android:title="@string/title_activity_settings"
+        android:showAsAction="never|withText" />
 </menu>

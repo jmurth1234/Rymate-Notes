@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Donate/Donate.iml" filepath="$PROJECT_DIR$/Donate/Donate.iml" />
       <module fileurl="file://$PROJECT_DIR$/RichEditText/RichEditText.iml" filepath="$PROJECT_DIR$/RichEditText/RichEditText.iml" />
       <module fileurl="file://$PROJECT_DIR$/Rymate-Notes.iml" filepath="$PROJECT_DIR$/Rymate-Notes.iml" />
       <module fileurl="file://$PROJECT_DIR$/RymateNotes.iml" filepath="$PROJECT_DIR$/RymateNotes.iml" />

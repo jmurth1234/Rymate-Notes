@@ -62,6 +62,7 @@ public class NoteViewFragment extends Fragment {
                     mBodyText.setFocusable(false);
                     mBodyText.setFocusableInTouchMode(false);
                     imeManager.hideSoftInputFromWindow(mBodyText.getWindowToken(), 0);
+                    mDbHelper.updateNote(mRowId, noteTitle, Html.toHtml(mBodyText.getText()), categoryId);
                     mode.finish(); // Action picked, so close the CAB
                     return true;
                 default:
@@ -75,6 +76,8 @@ public class NoteViewFragment extends Fragment {
 
         }
     };
+    private int categoryId;
+    private String noteTitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,7 +116,7 @@ public class NoteViewFragment extends Fragment {
             com.manuelpeinado.glassactionbar.GlassActionBarHelper helper = new GlassActionBarHelper().contentLayout(R.layout.fragment_note_view);
             rootView = helper.createView(this.getActivity());
         } else {
-            rootView = inflater.inflate(R.layout.fragment_note_view, container, false);
+            rootView = inflater.inflate(R.layout.fragment_note_view_twopane, container, false);
 
         }
 
@@ -126,7 +129,9 @@ public class NoteViewFragment extends Fragment {
         if (mRowId != null) {
             Cursor note = mDbHelper.fetchNote(mRowId);
             getActivity().startManagingCursor(note);
+            noteTitle = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE));
             noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
+            categoryId = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
             Spanned formattedBody = Html.fromHtml(noteText);
             mBodyText.setText(formattedBody);
             if (getActivity().getClass() == NoteViewActivity.class) {

@@ -8,12 +8,14 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,6 +63,12 @@ public class NotesListActivity extends FragmentActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPref.getString("theme_list", "").equals("Dark")) {
+            setTheme(R.style.AppDarkTheme);
+        }
+
         super.onCreate(savedInstanceState);
 
         ROBOTO_LIGHT = Typeface.createFromAsset(this.getAssets(), "Roboto-Light.ttf");
@@ -262,6 +270,7 @@ public class NotesListActivity extends FragmentActivity
                 return true;
             case R.id.delete_note:
                 list.showDeleteDialog(mRowId);
+                return true;
             case R.id.new_category:
                 final EditText input = new EditText(this);
                 input.setHint(R.string.new_category);
@@ -282,6 +291,12 @@ public class NotesListActivity extends FragmentActivity
                         // Do nothing.
                     }
                 }).show();
+                return true;
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

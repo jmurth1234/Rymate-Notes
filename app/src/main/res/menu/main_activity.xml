@@ -5,4 +5,7 @@
           android:icon="@drawable/ic_action_new"
           android:title="@string/menu_insert"
         android:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/settings"
+        android:title="@string/title_activity_settings"
+        android:showAsAction="never|withText" />
 </menu>

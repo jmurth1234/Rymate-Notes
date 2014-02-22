@@ -62,6 +62,8 @@ public class EditorActionModeCallback {
             MenuInflater inflater = mode.getMenuInflater();
 
             inflater.inflate(menuResource, menu);
+            menu.removeItem(android.R.id.selectAll);
+
             listener.setIsShowing(true);
 
             return (true);
