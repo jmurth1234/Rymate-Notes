@@ -33,6 +33,7 @@
                 android:fillViewport="false"
                 android:layout_weight="4"
                 tools:ignore="MergeRootFrame"/>
+
     </LinearLayout>
 
     <!-- The navigation drawer -->

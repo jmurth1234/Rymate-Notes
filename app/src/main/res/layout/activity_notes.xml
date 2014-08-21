@@ -4,9 +4,23 @@
     android:layout_height="match_parent">
     <!-- The main content view -->
     <FrameLayout
-        android:id="@+id/note_list_container"
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/note_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <net.rymate.notes.ui.FloatingActionButton
+            android:id="@+id/fabbutton"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp" />
+    </FrameLayout>
     <!-- The navigation drawer -->
     <LinearLayout
         android:id="@+id/left_drawer"
@@ -24,4 +38,5 @@
             android:dividerHeight="0dp"
             android:background="?catBackColour" />
     </LinearLayout>
+
 </android.support.v4.widget.DrawerLayout>

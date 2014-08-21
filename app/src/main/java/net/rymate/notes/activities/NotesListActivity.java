@@ -1,29 +1,32 @@
 package net.rymate.notes.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import net.rymate.notes.R;
@@ -34,13 +37,14 @@ import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.DrawerToggle;
+import net.rymate.notes.ui.FloatingActionButton;
 import net.rymate.notes.ui.UIUtils;
 
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NotesListActivity extends FragmentActivity
-        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener {
+public class NotesListActivity extends BaseNoteActivity
+        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener, View.OnClickListener {
 
     public static Typeface ROBOTO_LIGHT;
     public static Typeface ROBOTO_LIGHT_ITALICS;
@@ -59,29 +63,17 @@ public class NotesListActivity extends FragmentActivity
     private NotesDbAdapter mDbHelper;
     private NotesListFragment list;
     private LinearLayout mDrawerLinear;
+    private NoteViewFragment fragment;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (sharedPref.getString("theme_list", "").equals("Dark")) {
-            setTheme(R.style.AppDarkTheme);
-        }
-
         super.onCreate(savedInstanceState);
 
         ROBOTO_LIGHT = Typeface.createFromAsset(this.getAssets(), "Roboto-Light.ttf");
         ROBOTO_LIGHT_ITALICS = Typeface.createFromAsset(this.getAssets(), "Roboto-LightItalic.ttf");
 
         setContentView(R.layout.activity_notes);
-
-        list = new NotesListFragment();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.note_list_container, list)
-                .commit();
-
 
         if (findViewById(R.id.note_container) != null) {
             // The detail container view will be present only in the
@@ -93,8 +85,27 @@ public class NotesListActivity extends FragmentActivity
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
             FragmentManager fm = getSupportFragmentManager();
-            list.setActivateOnItemClick(true);
+            //list.setActivateOnItemClick(true);
         }
+
+
+        if (!mTwoPane) {
+            final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
+            mFab.init(Color.parseColor("#1e90ff"));
+            mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_new));
+            mFab.showFab();
+
+            mFab.setOnClickListener(this);
+
+            list = new NotesListFragment(mFab);
+        } else {
+            list = new NotesListFragment();
+        }
+
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.note_list_container, list)
+                .commit();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // the layout
         mDrawerLinear = (LinearLayout) findViewById(R.id.left_drawer);
@@ -108,7 +119,7 @@ public class NotesListActivity extends FragmentActivity
         mDrawerToggle = new DrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                R.drawable.ic_navigation_drawer,  /* nav drawer icon to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
@@ -125,6 +136,8 @@ public class NotesListActivity extends FragmentActivity
                 supportInvalidateOptionsMenu();
             }
         };
+
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1e90ff")));
 
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -147,7 +160,7 @@ public class NotesListActivity extends FragmentActivity
         }
 
         getCategories();
-        // TODO: If exposing deep links into your app, handle intents here.
+
     }
 
 
@@ -163,7 +176,7 @@ public class NotesListActivity extends FragmentActivity
             // fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putLong(NotesDbAdapter.KEY_ROWID, RowID);
-            NoteViewFragment fragment = new NoteViewFragment();
+            fragment = new NoteViewFragment();
             fragment.setArguments(arguments);
             mRowId = RowID;
             getSupportFragmentManager().beginTransaction()
@@ -186,12 +199,28 @@ public class NotesListActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
-        if (pref.getBoolean("firststart", true)) {
-            // update sharedpreference - another start wont be the first
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean("firststart", false);
-            editor.commit(); // apply changes
-        }
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                list.search(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                list.search(query);
+                return true;
+            }
+
+        });
+
         return true;
     }
 
@@ -202,6 +231,9 @@ public class NotesListActivity extends FragmentActivity
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.main_activity_navdrawer, menu);
             return true;
+        } else {
+            menu.clear();
+            onCreateOptionsMenu(menu);
         }
 
         if (selected) {
@@ -209,7 +241,20 @@ public class NotesListActivity extends FragmentActivity
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.noteview_menu_tablet, menu);
             selected = false;
-        } else if (editing) {
+        }
+        if (fragment != null) {
+            if (fragment.isEditing()) {
+                menu.clear();
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.edit_activity, menu);
+            } else {
+                menu.clear();
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.noteview_menu_tablet, menu);
+            }
+        }
+
+        if (editing) {
             menu.clear();
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.edit_activity, menu);
@@ -252,7 +297,7 @@ public class NotesListActivity extends FragmentActivity
                 }
                 return true;
             case R.id.save_note:
-                if (editing = true) {
+                if (editing == true) {
                     // In two-pane mode, show the detail view in this activity by
                     // adding or replacing the detail fragment using a
                     // fragment transaction.
@@ -264,6 +309,8 @@ public class NotesListActivity extends FragmentActivity
                             .replace(R.id.note_container, fragment)
                             .commit();
                     editing = false;
+                } else if (fragment.isEditing()) {
+                    fragment.saveNote();
                 }
                 selected = true;
                 supportInvalidateOptionsMenu();
@@ -272,31 +319,32 @@ public class NotesListActivity extends FragmentActivity
                 list.showDeleteDialog(mRowId);
                 return true;
             case R.id.new_category:
-                final EditText input = new EditText(this);
-                input.setHint(R.string.new_category);
-                input.setSingleLine();
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.menu_category)
-                        .setView(input)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Editable value = input.getText();
-                                if (value.toString().length() != 0) {
-                                    mDbHelper.addCategory(value.toString());
-                                }
-                                getCategories();
-                            }
-                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                LayoutInflater inflater = getLayoutInflater();
+                final View addCategoryView = inflater.inflate(R.layout.dialog_addcategory, null);
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        EditText text = (EditText) addCategoryView.findViewById(R.id.category);
+                        if (text.getText().toString().length() != 0) {
+                            mDbHelper.addCategory(text.getText().toString());
+                        }
+                        getCategories();
+                    }
+                });
+
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }
-                }).show();
-                return true;
-            case R.id.settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
+                });
 
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.setView(addCategoryView, 0, 0, 0, 0);
+
+                dialog.show();
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -335,9 +383,12 @@ public class NotesListActivity extends FragmentActivity
      * Swaps fragments in the main content view
      */
     private void selectItem(int position) {
-        list.fillData(position);
-
         mDrawerLayout.closeDrawer(mDrawerLinear);
+        if (mDbHelper.fetchAllNotes().getCount() == 0) {
+            return;
+        } else {
+            list.fillData(position);
+        }
     }
 
     public void getCategories() {
@@ -370,6 +421,13 @@ public class NotesListActivity extends FragmentActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         list.onDialogNegativeClick(dialog);
+    }
+
+    // for mFab
+    @Override
+    public void onClick(View view) {
+        Intent detailIntent = new Intent(this, NoteEditActivity.class);
+        startActivity(detailIntent);
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

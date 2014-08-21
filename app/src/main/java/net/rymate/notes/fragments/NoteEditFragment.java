@@ -1,16 +1,19 @@
 package net.rymate.notes.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -18,9 +21,10 @@ import android.widget.Toast;
 import com.commonsware.cwac.richedit.RichEditText;
 
 import net.rymate.notes.R;
-
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.database.NotesDbAdapter;
+
+import java.util.Calendar;
 
 /**
  * Created by Ryan on 07/08/13.
@@ -29,11 +33,11 @@ public class NoteEditFragment extends Fragment {
 
     private EditText mTitleText;
     private RichEditText mBodyText;
-    private Long mRowId;
+    private Long mRowId = null;
     private NotesDbAdapter mDbHelper;
-    private boolean newNote;
+    private boolean newNote = true;
     private Spinner mCategorySpinner;
-    private Long mCatId;
+    private String noteText = "";
 
     public NoteEditFragment(boolean b) {
         this.newNote = b;
@@ -61,6 +65,16 @@ public class NoteEditFragment extends Fragment {
                 }
             }
         }
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            noteText = bundle.getString(NotesDbAdapter.KEY_BODY);
+            if (noteText != null) {
+                if (!noteText.equals("")) {
+                    mRowId = null;
+                }
+            }
+        }
     }
 
     @Override
@@ -71,6 +85,7 @@ public class NoteEditFragment extends Fragment {
         mTitleText = (EditText) rootView.findViewById(R.id.title);
         mBodyText = (RichEditText) rootView.findViewById(R.id.note_body);
         mCategorySpinner = (Spinner) rootView.findViewById(R.id.spinner);
+
         mBodyText.enableActionModes(true);
 
         populateFields();
@@ -99,13 +114,12 @@ public class NoteEditFragment extends Fragment {
         if (mRowId != null) {
             note = mDbHelper.fetchNote(mRowId);
             getActivity().startManagingCursor(note);
-
             mTitleText.setText(note.getString(
-                    note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
+                    note.getColumnIndex(NotesDbAdapter.KEY_TITLE)));
             mBodyText.setText(Html.fromHtml(note.getString(
-                    note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY))));
+                    note.getColumnIndex(NotesDbAdapter.KEY_BODY))));
 
-            int category = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
+            int category = note.getInt(note.getColumnIndex(NotesDbAdapter.KEY_CATID));
 
             if ((category == 0) || (category == 1)) {
                 mCategorySpinner.setSelection(0);
@@ -113,13 +127,18 @@ public class NoteEditFragment extends Fragment {
                 mCategorySpinner.setSelection(category - 1);
             }
 
+
+        } else if (!noteText.equals("")) {
+            mBodyText.setText(noteText);
+            Calendar c = Calendar.getInstance();
+            mTitleText.setText("Note to self from " + c.getTime());
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        saveState();
+        //saveState();
         outState.putSerializable(NotesDbAdapter.KEY_ROWID, mRowId);
     }
 
@@ -148,31 +167,42 @@ public class NoteEditFragment extends Fragment {
         int category = mCategorySpinner.getSelectedItemPosition() + 1;
         boolean saved;
 
-        if (body.length() != 0) {
-            if (mRowId == null) {
-                long id = mDbHelper.createNote(title, bodyText, category);
-                if (id > 0) {
-                    mRowId = id;
-                    saved = true;
-                } else {
-                    saved = false;
-                }
-            } else {
-                saved = mDbHelper.updateNote(mRowId, title, bodyText, category);
-            }
-
-            Context context = getActivity().getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            int durationFailed = Toast.LENGTH_LONG;
-
-            if (saved) {
-                Toast toast = Toast.makeText(context, R.string.note_saved, duration);
-                toast.show();
-            } else {
-                Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
-                toast.show();
-
-            }
+        if (title.length() == 0) {
+            mTitleText.setError("Your note needs a title!");
+            return;
         }
+
+        if (body.length() == 0) {
+            mBodyText.setError("Your note needs something in it!");
+            return;
+        }
+
+        if (mRowId == null) {
+            long id = mDbHelper.createNote(title, bodyText, category);
+            if (id > 0) {
+                mRowId = id;
+                saved = true;
+            } else {
+                saved = false;
+            }
+        } else {
+            saved = mDbHelper.updateNote(mRowId, title, bodyText, category);
+        }
+
+        Context context = getActivity().getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        int durationFailed = Toast.LENGTH_LONG;
+
+        if (saved) {
+            Toast toast = Toast.makeText(context, R.string.note_saved, duration);
+            toast.show();
+        } else {
+            Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
+            toast.show();
+
+        }
+
+        NavUtils.navigateUpTo(this.getActivity(), new Intent(this.getActivity(), NotesListActivity.class));
+
     }
 }

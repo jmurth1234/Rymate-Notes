@@ -1,4 +1,4 @@
-<com.cyrilmottier.android.translucentactionbar.NotifyingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="fill_parent"
@@ -6,8 +6,7 @@
     android:fillViewport="true"
     android:paddingBottom="5dp"
     android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="48dp">
+    android:paddingRight="5dp">
 
     <EditText xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -17,9 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#00000000"
-        android:inputType="textMultiLine"
         android:longClickable="true"
         android:padding="4dp"
         android:textIsSelectable="true"
-        tools:context="fragments.NotesViewFragment" />
-</com.cyrilmottier.android.translucentactionbar.NotifyingScrollView>
+        tools:context="fragments.NotesViewFragment"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:gravity="left|top" />
+</ScrollView>

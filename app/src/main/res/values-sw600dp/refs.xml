@@ -4,5 +4,4 @@
     two-pane version on Large screens. Do not confuse two pain with T Pain.
     -->
     <item type="layout" name="activity_notes">@layout/activity_notes_twopane</item>
-    <item type="layout" name="fragment_note_view">@layout/fragment_note_view_twopane</item>
 </resources>

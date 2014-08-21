@@ -22,12 +22,14 @@
     <string name="showcase_note_message">Press the + button to add a note. Slide from the left to
         view note categories.</string>
     <string name="menu_category">Add category</string>
-    <string name="new_category">Name the category!</string>
+    <string name="new_category">Category Name</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_notes_1">You have no notes yet.</string>
     <string name="no_notes_2">Create one!</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="print_note">Print</string>
+    <string name="menu_search">Search</string>
 
 
 </resources>

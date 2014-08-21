@@ -10,12 +10,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import com.google.android.gms.ads.AdView;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
 import net.rymate.notes.database.SimpleCursorAdapter;
+import net.rymate.notes.ui.FloatingActionButton;
 
 /**
  * Created by Ryan on 04/07/13.
@@ -39,6 +42,7 @@ public class NotesListFragment extends Fragment
      * Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private FloatingActionButton fab = null;
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -64,6 +68,8 @@ public class NotesListFragment extends Fragment
         return mNoteslist;
     }
 
+
+
     /**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
@@ -86,6 +92,10 @@ public class NotesListFragment extends Fragment
         }
     };
 
+    public NotesListFragment(FloatingActionButton fab) {
+        this.fab = fab;
+    }
+
     public NotesListFragment() {}
 
     @Override
@@ -103,16 +113,33 @@ public class NotesListFragment extends Fragment
 
         if(isPackageInstalled("net.rymate.rymatenotesdonate", getActivity())) {
             AdView adView = (AdView) rootView.findViewById(R.id.adView);
+            ((LinearLayout)rootView).removeView(adView);
             adView.destroy();
         } else {
-        // Look up the AdView as a resource and load a request.
-        AdView adView = (AdView) rootView.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("D39052E7A071396A79885654978FE668").addTestDevice("B32AA77C2C97BEB587AE4DB21C419AD2").build();
-        adView.loadAd(adRequest);
+            // Look up the AdView as a resource and load a request.
+            AdView adView = (AdView) rootView.findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().addTestDevice("D39052E7A071396A79885654978FE668").addTestDevice("B32AA77C2C97BEB587AE4DB21C419AD2").build();
+            adView.loadAd(adRequest);
         }
 
         mNoteslist = (ListView) rootView.findViewById(R.id.listView);
         mNoteslist.setOnItemClickListener(this);
+
+        if (fab != null){
+            getListView().setOnScrollListener(new ListView.OnScrollListener() {
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    // TODO Auto-generated method stub
+                }
+
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    if (scrollState > 0)
+                        fab.hideFab();
+                    else
+                        fab.showFab();
+                }
+            });
+        }
+
         fillData();
 
         return rootView;
@@ -168,6 +195,31 @@ public class NotesListFragment extends Fragment
 
         setListAdapter(notes);
     }
+
+
+    public void search(String s) {
+        if (mDbHelper.fetchAllNotes().getCount() == 0) {
+            return;
+        }
+
+        if (!s.isEmpty()) {
+            Cursor notesCursor = mDbHelper.searchNotes(s);
+            this.getActivity().startManagingCursor(notesCursor);
+
+            // Create an array to specify the fields we want to display in the list
+            String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
+
+            // and an array of the fields we want to bind those fields to (in this case just text1)
+            int[] to = new int[]{android.R.id.text1, android.R.id.text2};
+
+            // Now create a simple cursor adapter and set it to display
+            SimpleCursorAdapter notes =
+                    new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
+
+            setListAdapter(notes);
+        }
+    }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {

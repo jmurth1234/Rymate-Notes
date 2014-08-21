@@ -15,21 +15,21 @@
 -->
 
 <TwoLineListItem xmlns:android="http://schemas.android.com/apk/res/android"
-                 android:paddingTop="2dip"
-                 android:paddingBottom="2dip"
-                 android:paddingLeft="8dip"
-                 android:paddingRight="8dip"
+                 android:paddingTop="8dip"
+                 android:paddingBottom="16dip"
+                 android:paddingLeft="16dip"
+                 android:paddingRight="16dip"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:minHeight="?android:attr/listPreferredItemHeight"
                  android:mode="twoLine"
-                 android:clickable="false">
+    android:background="@drawable/card"
+    android:clickable="false">
 
     <net.rymate.notes.ui.RobotoLightTextView
             android:id="@android:id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dip"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
 
@@ -40,8 +40,7 @@
             android:layout_below="@android:id/text1"
             android:layout_alignStart="@android:id/text1"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:singleLine="true"
+            android:maxLines="3"
             android:textStyle="italic"/>
-
 
 </TwoLineListItem>

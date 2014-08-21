@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
 import android.support.v4.view.GravityCompat;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +29,7 @@ import net.rymate.notes.ui.UIUtils;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends FragmentActivity
+public class NoteViewActivity extends BaseNoteActivity
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;
@@ -36,13 +37,6 @@ public class NoteViewActivity extends FragmentActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (sharedPref.getString("theme_list", "").equals("Dark")) {
-            setTheme(R.style.AppDarkTheme_DarkTranslucentActionBar);
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
 
@@ -71,10 +65,10 @@ public class NoteViewActivity extends FragmentActivity
 
             Bundle arguments = new Bundle();
             arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-            NoteViewFragment fragment = new NoteViewFragment();
-            fragment.setArguments(arguments);
+            nvf = new NoteViewFragment();
+            nvf.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.note_container, fragment)
+                    .replace(R.id.note_container, nvf)
                     .commit();
         }
     }
@@ -83,7 +77,8 @@ public class NoteViewActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.noteview_menu_phone, menu);
-
+        if (!UIUtils.hasKitKat())
+            menu.removeItem(R.id.print_note);
         return true;
     }
 
@@ -92,10 +87,15 @@ public class NoteViewActivity extends FragmentActivity
         if (nvf == null) {
             return true;
         }
+
         if (nvf.isEditing()) {
             menu.clear();
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.edit_activity, menu);
+        } else {
+            menu.clear();
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.noteview_menu_phone, menu);
         }
         return true;
     }
@@ -120,6 +120,12 @@ public class NoteViewActivity extends FragmentActivity
                 return true;
             case R.id.delete_note:
                 showDeleteDialog(mRowId);
+                return true;
+            case R.id.save_note:
+                nvf.saveNote();
+                return true;
+            case R.id.print_note:
+                nvf.printNote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

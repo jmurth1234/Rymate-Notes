@@ -2,30 +2,11 @@
 
     <attr name="catBackColour" format="reference|color" />
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="catBackColour">#f3f3f3</item>
     </style>
 
     <style name="AppDarkTheme" parent="android:Theme.Holo">
         <item name="catBackColour">#111</item>
-    </style>
-
-
-    <style name="AppTheme.TranslucentActionBar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarStyle">@style/TranslucentActionBar</item>
-    </style>
-
-    <style name="AppDarkTheme.DarkTranslucentActionBar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarStyle">@style/DarkTranslucentActionBar</item>
-    </style>
-
-    <style name="DarkTranslucentActionBar" parent="android:Widget.ActionBar">
-        <item name="android:background">#11000000</item>
-    </style>
-
-    <style name="TranslucentActionBar" parent="android:Widget.ActionBar">
-        <item name="android:background">#11f3f3f3</item>
     </style>
 </resources>

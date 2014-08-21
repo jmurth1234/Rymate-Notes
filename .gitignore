@@ -3,3 +3,7 @@
 /.idea/workspace.xml
 .DS_Store
 app/src/main/res/values/adstring.xml
+app/build/
+RichEditText/build/
+Donate/build
+/build

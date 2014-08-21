@@ -10,6 +10,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/listView"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"/>
 

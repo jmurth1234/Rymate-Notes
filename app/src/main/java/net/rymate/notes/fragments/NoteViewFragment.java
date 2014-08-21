@@ -1,11 +1,17 @@
 package net.rymate.notes.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
+import android.print.PrintManager;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,9 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 
-import com.manuelpeinado.glassactionbar.GlassActionBarHelper;
 
 import net.rymate.notes.R;
 import net.rymate.notes.activities.NoteViewActivity;
@@ -35,47 +42,6 @@ public class NoteViewFragment extends Fragment {
     private boolean editing;
     private InputMethodManager imeManager;
     private String noteText;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.edit_activity, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.save_note:
-                    setEditing(false);
-                    mBodyText.setFocusable(false);
-                    mBodyText.setFocusableInTouchMode(false);
-                    imeManager.hideSoftInputFromWindow(mBodyText.getWindowToken(), 0);
-                    mDbHelper.updateNote(mRowId, noteTitle, Html.toHtml(mBodyText.getText()), categoryId);
-                    mode.finish(); // Action picked, so close the CAB
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-
-        }
-    };
     private int categoryId;
     private String noteTitle;
 
@@ -112,17 +78,11 @@ public class NoteViewFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView;
 
-        if (getActivity().getClass() == NoteViewActivity.class) {
-            com.manuelpeinado.glassactionbar.GlassActionBarHelper helper = new GlassActionBarHelper().contentLayout(R.layout.fragment_note_view);
-            rootView = helper.createView(this.getActivity());
-        } else {
-            rootView = inflater.inflate(R.layout.fragment_note_view_twopane, container, false);
+            rootView = inflater.inflate(R.layout.fragment_note_view, container, false);
 
-        }
 
         mBodyText = (EditText) rootView.findViewById(R.id.noteView);
         final NoteViewFragment nvf = this;
-        mBodyText.setCustomSelectionActionModeCallback(mActionModeCallback);
         mBodyText.setFocusable(false);
         mBodyText.setFocusableInTouchMode(false);
 
@@ -149,7 +109,6 @@ public class NoteViewFragment extends Fragment {
                 if (editing) {
                     return nope;
                 }
-
                 mBodyText.showContextMenu();
 
                 return true;
@@ -163,8 +122,12 @@ public class NoteViewFragment extends Fragment {
                 mBodyText.setFocusableInTouchMode(true);
                 mBodyText.requestFocus();
 
+                getActivity().invalidateOptionsMenu();
+
                 imeManager = (InputMethodManager) getActivity().getApplicationContext().getSystemService("input_method");
                 imeManager.showSoftInput(mBodyText, 0);
+
+                setEditing(true);
             }
         };
 
@@ -185,4 +148,55 @@ public class NoteViewFragment extends Fragment {
         this.editing = editing;
     }
 
+    public void saveNote() {
+        setEditing(false);
+        getActivity().invalidateOptionsMenu();
+        mBodyText.setFocusable(false);
+        mBodyText.setFocusableInTouchMode(false);
+        imeManager.hideSoftInputFromWindow(mBodyText.getWindowToken(), 0);
+        mDbHelper.updateNote(mRowId, noteTitle, Html.toHtml(mBodyText.getText()), categoryId);
+    }
+
+    private WebView mWebView;
+
+    public void printNote() {
+        // Create a WebView object specifically for printing
+        WebView webView = new WebView(getActivity());
+        webView.setWebViewClient(new WebViewClient() {
+
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.i("Rymate Notes", "page finished loading " + url);
+                createWebPrintJob(view);
+                mWebView = null;
+            }
+        });
+
+        // Generate an HTML document on the fly:
+        String htmlDocument = "<html><body><h1>" + noteTitle + "</h1><p>" + noteText +
+                "</p></body></html>";
+        webView.loadDataWithBaseURL(null, htmlDocument, "text/HTML", "UTF-8", null);
+
+        // Keep a reference to WebView object until you pass the PrintDocumentAdapter
+        // to the PrintManager
+        mWebView = webView;
+    }
+
+    private void createWebPrintJob(WebView webView) {
+        // Get a PrintManager instance
+        PrintManager printManager = (PrintManager) getActivity()
+                .getSystemService(Context.PRINT_SERVICE);
+
+        // Get a print adapter instance
+        PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter();
+
+        // Create a print job with name and adapter instance
+        String jobName = getString(R.string.app_name) + " Document";
+        printManager.print(jobName, printAdapter,
+                new PrintAttributes.Builder().build());
+    }
 }

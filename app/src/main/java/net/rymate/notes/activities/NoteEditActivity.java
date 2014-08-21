@@ -17,56 +17,60 @@ import net.rymate.notes.fragments.NoteEditFragment;
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditActivity extends FragmentActivity {
+public class NoteEditActivity extends BaseNoteActivity {
     Long mRowId;
-
+    NoteEditFragment fragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (sharedPref.getString("theme_list", "").equals("Dark")) {
-            setTheme(R.style.AppDarkTheme);
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
 
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
-        if (savedInstanceState == null) {
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+
+        if (Intent.ACTION_SEND.equals(action) && intent.getType() != null) {
+            if ("text/plain".equals(intent.getType())) {
+                Bundle arguments = new Bundle();
+                arguments.putString(NotesDbAdapter.KEY_BODY, intent.getStringExtra(Intent.EXTRA_TEXT));
+                fragment = new NoteEditFragment(true);
+                fragment.setArguments(arguments);
+            }
+        } else if (("com.google.android.gm.action.AUTO_SEND").equals(action) && intent.getType() != null) {
+            Bundle arguments = new Bundle();
+            arguments.putString(NotesDbAdapter.KEY_BODY, intent.getStringExtra(Intent.EXTRA_TEXT));
+            fragment = new NoteEditFragment(true);
+            fragment.setArguments(arguments);
+        } else if (savedInstanceState == null) {
             // Create the note view fragment and add it to the activity
             // using a fragment transaction.
             mRowId = (savedInstanceState == null) ? null :
                     (Long) savedInstanceState.getSerializable(NotesDbAdapter.KEY_ROWID);
             if (mRowId == null) {
-                Bundle extras = getIntent().getExtras();
+                Bundle extras = intent.getExtras();
                 mRowId = extras != null ? extras.getLong(NotesDbAdapter.KEY_ROWID)
                         : null;
             }
         }
-        NoteEditFragment fragment;
 
-        if (mRowId != null) {
-            Bundle arguments = new Bundle();
-            arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-            fragment = new NoteEditFragment(false);
-            fragment.setArguments(arguments);
-        } else {
-            fragment = new NoteEditFragment(true);
+        if (fragment == null) {
+            if (mRowId != null) {
+                Bundle arguments = new Bundle();
+                arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
+                fragment = new NoteEditFragment(false);
+                fragment.setArguments(arguments);
+            } else {
+                fragment = new NoteEditFragment(true);
+            }
         }
 
-        getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.note_container, fragment)
                 .commit();
 
@@ -99,7 +103,8 @@ public class NoteEditActivity extends FragmentActivity {
                 NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
                 return true;
             case R.id.save_note:
-                NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
+                fragment.saveState();
+                //NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
 
                 return true;
         }

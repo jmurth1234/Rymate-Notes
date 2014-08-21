@@ -5,4 +5,8 @@
           android:icon="@drawable/ic_action_save"
           android:title="@string/confirm"
         android:showAsAction="always" />
+
+    <item android:id="@+id/print_note"
+        android:title="@string/print_note"
+        android:showAsAction="never|withText" />
 </menu>
