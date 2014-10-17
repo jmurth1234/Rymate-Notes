@@ -20,7 +20,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".activities.NotesListActivity" >
+        <activity android:name="net.rymate.notes.activities.NotesListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,13 +28,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.NoteViewActivity"
+            android:name="net.rymate.notes.activities.NoteViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activities.NoteEditActivity"
+            android:name="net.rymate.notes.activities.NoteEditActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateVisible|adjustResize" >
+
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -54,17 +55,18 @@
                 <data android:mimeType="*/*" >
                 </data>
             </intent-filter>
+
         </activity>
         <activity
-            android:name=".activities.NotesLoginActivity"
-            android:label="@string/title_activity_notes_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        <activity
+            android:name="net.rymate.notes.activities.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.rymate.notes.activities.NotesListActivity" />
         </activity>
     </application>
-
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
 </manifest>

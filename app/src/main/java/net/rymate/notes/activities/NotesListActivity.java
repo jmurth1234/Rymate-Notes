@@ -29,9 +29,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
-import com.baasbox.android.BaasBox;
-import com.baasbox.android.BaasUser;
-
 import net.rymate.notes.R;
 import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
@@ -67,23 +64,11 @@ public class NotesListActivity extends BaseNoteActivity
     private NotesListFragment list;
     private LinearLayout mDrawerLinear;
     private NoteViewFragment fragment;
-    private BaasBox box;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        BaasBox.Builder b =
-                new BaasBox.Builder(this);
-        box = b.setApiDomain("cloud.rymate.co.uk").setUseHttps(true)
-                .setAppCode("1234567890").setPort(443)
-                .init();
-
-        if (BaasUser.current() == null) {
-            Intent detailIntent = new Intent(this, NotesLoginActivity.class);
-            startActivity(detailIntent);
-        }
 
         ROBOTO_LIGHT = Typeface.createFromAsset(this.getAssets(), "Roboto-Light.ttf");
         ROBOTO_LIGHT_ITALICS = Typeface.createFromAsset(this.getAssets(), "Roboto-LightItalic.ttf");
