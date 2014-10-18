@@ -111,17 +111,6 @@ public class NotesListFragment extends Fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        if(isPackageInstalled("net.rymate.rymatenotesdonate", getActivity())) {
-            AdView adView = (AdView) rootView.findViewById(R.id.adView);
-            ((LinearLayout)rootView).removeView(adView);
-            adView.destroy();
-        } else {
-            // Look up the AdView as a resource and load a request.
-            AdView adView = (AdView) rootView.findViewById(R.id.adView);
-            AdRequest adRequest = new AdRequest.Builder().addTestDevice("D39052E7A071396A79885654978FE668").addTestDevice("B32AA77C2C97BEB587AE4DB21C419AD2").build();
-            adView.loadAd(adRequest);
-        }
-
         mNoteslist = (ListView) rootView.findViewById(R.id.listView);
         mNoteslist.setOnItemClickListener(this);
 

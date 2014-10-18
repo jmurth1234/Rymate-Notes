@@ -24,7 +24,9 @@
                  android:minHeight="?android:attr/listPreferredItemHeight"
                  android:mode="twoLine"
     android:background="@drawable/card"
-    android:clickable="false">
+    android:clickable="false"
+    android:elevation="2dp"
+    >
 
     <net.rymate.notes.ui.RobotoLightTextView
             android:id="@android:id/text1"

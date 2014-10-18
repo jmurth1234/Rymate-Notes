@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:notes="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/save_note"
           android:icon="@drawable/ic_action_save"
           android:title="@string/confirm"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 
     <item android:id="@+id/print_note"
         android:title="@string/print_note"
-        android:showAsAction="never|withText" />
+        app:showAsAction="never|withText" />
 </menu>

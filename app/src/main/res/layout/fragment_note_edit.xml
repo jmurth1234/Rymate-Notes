@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="56dp"
         android:orientation="horizontal">
 
         <EditText
@@ -22,7 +22,7 @@
 
         <Spinner
             android:id="@+id/spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="fill_parent" />
 
     </LinearLayout>
@@ -42,5 +42,23 @@
         android:scrollHorizontally="false"
         android:gravity="left|top"
         android:textIsSelectable="true" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/cancel" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Note"
+            android:id="@+id/save_note" />
+    </LinearLayout>
 
 </LinearLayout>

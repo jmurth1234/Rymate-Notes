@@ -58,9 +58,6 @@
 
         </activity>
         <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-        <activity
             android:name="net.rymate.notes.activities.SettingsActivity"
             android:label="@string/title_activity_settings" >
             <meta-data

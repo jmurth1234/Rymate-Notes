@@ -15,7 +15,12 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +31,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import net.rymate.notes.R;
@@ -36,14 +40,15 @@ import net.rymate.notes.fragments.IntroFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
-import net.rymate.notes.ui.DrawerToggle;
 import net.rymate.notes.ui.FloatingActionButton;
 import net.rymate.notes.ui.UIUtils;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NotesListActivity extends BaseNoteActivity
+public class NotesListActivity extends ActionBarActivity
         implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener, View.OnClickListener {
 
     public static Typeface ROBOTO_LIGHT;
@@ -57,7 +62,7 @@ public class NotesListActivity extends BaseNoteActivity
     private boolean selected;
     private boolean editing;
     private DrawerLayout mDrawerLayout;
-    private DrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
     private SharedPreferences pref;
     private NotesDbAdapter mDbHelper;
@@ -103,6 +108,9 @@ public class NotesListActivity extends BaseNoteActivity
         }
 
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_toolbar);
+        setSupportActionBar(toolbar);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.note_list_container, list)
                 .commit();
@@ -112,27 +120,27 @@ public class NotesListActivity extends BaseNoteActivity
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        if (UIUtils.hasICS())
-            getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDrawerToggle = new DrawerToggle(
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_navigation_drawer,  /* nav drawer icon to replace 'Up' caret */
+                toolbar,  /* toolbar */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle("Rymate Notes");
+                getSupportActionBar().setTitle("Rymate Notes");
                 supportInvalidateOptionsMenu();
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle("Categories");
+                getSupportActionBar().setTitle("Categories");
                 supportInvalidateOptionsMenu();
             }
         };
@@ -201,11 +209,13 @@ public class NotesListActivity extends BaseNoteActivity
         inflater.inflate(R.menu.main_activity, menu);
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        MenuItem searchItem = menu.findItem(R.id.action_search);
 
-        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -220,6 +230,7 @@ public class NotesListActivity extends BaseNoteActivity
             }
 
         });
+
 
         return true;
     }

@@ -96,8 +96,8 @@ public class NoteViewFragment extends Fragment {
             mBodyText.setText(formattedBody);
             if (getActivity().getClass() == NoteViewActivity.class) {
                 NoteViewActivity activity = (NoteViewActivity) getActivity();
-                activity.getActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
-                activity.getActionBar().setDisplayHomeAsUpEnabled(true);
+                activity.getSupportActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         }
 

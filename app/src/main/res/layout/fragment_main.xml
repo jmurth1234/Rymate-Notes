@@ -14,13 +14,5 @@
         android:dividerHeight="0dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"/>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="320dp"
-        android:layout_height="50dp"
-        ads:adUnitId="@string/adstring"
-        ads:adSize="BANNER"
-        android:layout_gravity="center_horizontal" />
 </LinearLayout>
 

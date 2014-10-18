@@ -25,10 +25,10 @@ public class NoteEditActivity extends BaseNoteActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_note_view);
+        setContentView(R.layout.activity_note_edit);
 
         // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -77,7 +77,7 @@ public class NoteEditActivity extends BaseNoteActivity {
         NotesDbAdapter mDbHelper = new NotesDbAdapter(this);
         mDbHelper.open();
 
-        getActionBar().setTitle(R.string.edit_note);
+        //getActionBar().setTitle(R.string.edit_note);
 
     }
 

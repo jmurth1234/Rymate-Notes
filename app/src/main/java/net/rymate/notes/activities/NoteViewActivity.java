@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
 import android.support.v4.view.GravityCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +31,7 @@ import net.rymate.notes.ui.UIUtils;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends BaseNoteActivity
+public class NoteViewActivity extends ActionBarActivity
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;
@@ -40,8 +42,11 @@ public class NoteViewActivity extends BaseNoteActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_toolbar);
+        setSupportActionBar(toolbar);
+
         // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
