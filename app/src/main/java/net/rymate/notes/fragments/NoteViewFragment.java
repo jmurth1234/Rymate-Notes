@@ -6,17 +6,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
-import android.print.PrintJob;
 import android.print.PrintManager;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -28,7 +23,7 @@ import android.widget.EditText;
 import net.rymate.notes.R;
 import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
-import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.data.NotesDbAdapter;
 
 /**
  * Created by Ryan on 05/07/13.
@@ -67,10 +62,15 @@ public class NoteViewFragment extends Fragment {
         mDbHelper.open();
     }
 
-    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateText();
     }
 
     @Override
@@ -86,21 +86,7 @@ public class NoteViewFragment extends Fragment {
         mBodyText.setFocusable(false);
         mBodyText.setFocusableInTouchMode(false);
 
-        if (mRowId != null) {
-            Cursor note = mDbHelper.fetchNote(mRowId);
-            getActivity().startManagingCursor(note);
-            noteTitle = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE));
-            noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
-            categoryId = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
-            Spanned formattedBody = Html.fromHtml(noteText);
-            mBodyText.setText(formattedBody);
-            if (getActivity().getClass() == NoteViewActivity.class) {
-                NoteViewActivity activity = (NoteViewActivity) getActivity();
-                activity.getSupportActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
-                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        }
-
+        updateText();
 
         // Create an anonymous implementation of OnClickListener
         EditText.OnLongClickListener longClickListener = new EditText.OnLongClickListener() {
@@ -134,6 +120,23 @@ public class NoteViewFragment extends Fragment {
         mBodyText.setOnLongClickListener(longClickListener);
         mBodyText.setOnClickListener(clickListener);
         return rootView;
+    }
+
+    public void updateText() {
+        if (mRowId != null) {
+            Cursor note = mDbHelper.fetchNote(mRowId);
+            getActivity().startManagingCursor(note);
+            noteTitle = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE));
+            noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
+            categoryId = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
+            Spanned formattedBody = Html.fromHtml(noteText);
+            mBodyText.setText(formattedBody);
+            if (getActivity().getClass() == NoteViewActivity.class) {
+                NoteViewActivity activity = (NoteViewActivity) getActivity();
+                activity.getSupportActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        }
     }
 
     public void setText(String text) {

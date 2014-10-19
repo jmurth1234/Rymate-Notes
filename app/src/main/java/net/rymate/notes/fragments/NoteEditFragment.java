@@ -12,8 +12,8 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -21,15 +21,16 @@ import android.widget.Toast;
 import com.commonsware.cwac.richedit.RichEditText;
 
 import net.rymate.notes.R;
+import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
-import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.data.NotesDbAdapter;
 
 import java.util.Calendar;
 
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditFragment extends Fragment {
+public class NoteEditFragment extends Fragment implements Button.OnClickListener{
 
     private EditText mTitleText;
     private RichEditText mBodyText;
@@ -38,6 +39,8 @@ public class NoteEditFragment extends Fragment {
     private boolean newNote = true;
     private Spinner mCategorySpinner;
     private String noteText = "";
+    private Button mSaveButton;
+    private Button mCancelButton;
 
     public NoteEditFragment(boolean b) {
         this.newNote = b;
@@ -86,7 +89,13 @@ public class NoteEditFragment extends Fragment {
         mBodyText = (RichEditText) rootView.findViewById(R.id.note_body);
         mCategorySpinner = (Spinner) rootView.findViewById(R.id.spinner);
 
-        mBodyText.enableActionModes(true);
+        mSaveButton = (Button) rootView.findViewById(R.id.save_note);
+        mCancelButton = (Button) rootView.findViewById(R.id.cancel);
+
+        mCancelButton.setOnClickListener(this);
+        mSaveButton.setOnClickListener(this);
+
+        //mBodyText.enableActionModes(true);
 
         populateFields();
 
@@ -145,19 +154,28 @@ public class NoteEditFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        saveState();
+        //saveState();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        populateFields();
+        //populateFields();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.save_note) {
+            saveState();
+        } else {
+            getActivity().finish();
+        }
     }
 
     public void saveState() {
@@ -196,13 +214,13 @@ public class NoteEditFragment extends Fragment {
         if (saved) {
             Toast toast = Toast.makeText(context, R.string.note_saved, duration);
             toast.show();
+            Intent i = new Intent(this.getActivity(), NoteViewActivity.class);
+            i.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
+            NavUtils.navigateUpTo(this.getActivity(), i);
         } else {
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
             toast.show();
 
         }
-
-        NavUtils.navigateUpTo(this.getActivity(), new Intent(this.getActivity(), NotesListActivity.class));
-
     }
 }

@@ -2,28 +2,21 @@ package net.rymate.notes.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
-import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.ui.UIUtils;

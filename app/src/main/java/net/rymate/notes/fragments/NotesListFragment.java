@@ -3,33 +3,33 @@ package net.rymate.notes.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.MergeCursor;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commonsware.cwac.richedit.RichEditText;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
-import net.rymate.notes.database.NotesDbAdapter;
 import net.rymate.notes.R;
-import net.rymate.notes.database.SimpleCursorAdapter;
+import net.rymate.notes.data.NotesDbAdapter;
+import net.rymate.notes.data.SimpleCursorAdapter;
 import net.rymate.notes.ui.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ryan on 04/07/13.
@@ -42,46 +42,6 @@ public class NotesListFragment extends Fragment
      * Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-    private FloatingActionButton fab = null;
-
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /**
-     * How else do we access notes? :)
-     */
-    private NotesDbAdapter mDbHelper;
-
-    private ListView mNoteslist;
-
-    private long noteId;
-
-    public ListView getListView() {
-        return mNoteslist;
-    }
-
-
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(Long id);
-    }
-
     /**
      * A dummy implementation of the {@link Callbacks} interface that does
      * nothing. Used only when this fragment is not attached to an activity.
@@ -91,12 +51,37 @@ public class NotesListFragment extends Fragment
         public void onItemSelected(Long id) {
         }
     };
+    /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private Callbacks mCallbacks = sDummyCallbacks;
+    private FloatingActionButton fab = null;
+    /**
+     * The current activated item position. Only used on tablets.
+     */
+    private int mActivatedPosition = ListView.INVALID_POSITION;
+    /**
+     * How else do we access notes? :)
+     */
+    private NotesDbAdapter mDbHelper;
+    private AbsListView mNoteslist;
+
+    private long noteId;
+    private TextView mProgressText;
+    private RelativeLayout mProgressContainer;
+
 
     public NotesListFragment(FloatingActionButton fab) {
         this.fab = fab;
     }
 
-    public NotesListFragment() {}
+    public NotesListFragment() {
+    }
+
+    public AbsListView getListView() {
+        return mNoteslist;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,10 +96,10 @@ public class NotesListFragment extends Fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mNoteslist = (ListView) rootView.findViewById(R.id.listView);
+        mNoteslist = (AbsListView) rootView.findViewById(R.id.listView);
         mNoteslist.setOnItemClickListener(this);
 
-        if (fab != null){
+        if (fab != null) {
             getListView().setOnScrollListener(new ListView.OnScrollListener() {
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                     // TODO Auto-generated method stub
@@ -136,10 +121,11 @@ public class NotesListFragment extends Fragment
 
     public void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
+
         this.getActivity().startManagingCursor(notesCursor);
 
         // Create an array to specify the fields we want to display in the list
-        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.getSample()};
+        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
 
         // and an array of the fields we want to bind those fields to (in this case just text1)
         int[] to = new int[]{android.R.id.text1, android.R.id.text2};
@@ -185,7 +171,6 @@ public class NotesListFragment extends Fragment
         setListAdapter(notes);
     }
 
-
     public void search(String s) {
         if (mDbHelper.fetchAllNotes().getCount() == 0) {
             return;
@@ -208,7 +193,6 @@ public class NotesListFragment extends Fragment
             setListAdapter(notes);
         }
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -258,7 +242,7 @@ public class NotesListFragment extends Fragment
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        ListView v = getListView();
+        AbsListView v = getListView();
         if (v == null) {
             return;
         }
@@ -268,7 +252,6 @@ public class NotesListFragment extends Fragment
             v.setChoiceMode(ListView.CHOICE_MODE_NONE);
         }
     }
-
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
@@ -278,7 +261,6 @@ public class NotesListFragment extends Fragment
 
         mActivatedPosition = position;
     }
-
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -331,5 +313,17 @@ public class NotesListFragment extends Fragment
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(Long id);
     }
 }

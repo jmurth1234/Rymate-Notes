@@ -1,7 +1,6 @@
 package net.rymate.notes.activities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -34,22 +32,21 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import net.rymate.notes.R;
-import net.rymate.notes.database.NotesDbAdapter;
+import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.IntroFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.FloatingActionButton;
-import net.rymate.notes.ui.UIUtils;
-
-import java.util.ArrayList;
 
 /**
  * Created by Ryan on 05/07/13.
  */
 public class NotesListActivity extends ActionBarActivity
-        implements NotesListFragment.Callbacks, DeleteNoteDialogFragment.DeleteNoteDialogListener, IntroFragment.OnNewNoteClickedInIntroFragmentListener, View.OnClickListener {
+        implements NotesListFragment.Callbacks,
+        DeleteNoteDialogFragment.DeleteNoteDialogListener,
+        IntroFragment.OnNewNoteClickedInIntroFragmentListener, View.OnClickListener {
 
     public static Typeface ROBOTO_LIGHT;
     public static Typeface ROBOTO_LIGHT_ITALICS;
@@ -90,14 +87,13 @@ public class NotesListActivity extends ActionBarActivity
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
             FragmentManager fm = getSupportFragmentManager();
-            //list.setActivateOnItemClick(true);
         }
 
 
         if (!mTwoPane) {
             final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
             mFab.init(Color.parseColor("#1e90ff"));
-            mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_new));
+            mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_add));
             mFab.showFab();
 
             mFab.setOnClickListener(this);
@@ -105,6 +101,7 @@ public class NotesListActivity extends ActionBarActivity
             list = new NotesListFragment(mFab);
         } else {
             list = new NotesListFragment();
+            list.setActivateOnItemClick(true);
         }
 
 
@@ -178,6 +175,7 @@ public class NotesListActivity extends ActionBarActivity
      */
     @Override
     public void onItemSelected(Long RowID) {
+        System.out.println("It's happening!");
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -440,6 +438,7 @@ public class NotesListActivity extends ActionBarActivity
         Intent detailIntent = new Intent(this, NoteEditActivity.class);
         startActivity(detailIntent);
     }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

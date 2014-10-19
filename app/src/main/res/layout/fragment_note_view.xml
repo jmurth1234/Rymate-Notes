@@ -18,7 +18,7 @@
         android:background="#00000000"
         android:longClickable="true"
         android:padding="4dp"
-        android:textIsSelectable="true"
+        android:textIsSelectable="false"
         tools:context="fragments.NotesViewFragment"
         android:inputType="textMultiLine|textNoSuggestions"
         android:gravity="left|top" />

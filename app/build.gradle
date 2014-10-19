@@ -31,11 +31,17 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://repo.commonsware.com.s3.amazonaws.com"
+    }
+}
+
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile "com.android.support:appcompat-v7:+"
-    compile 'com.github.manuelpeinado.glassactionbar:glassactionbar:0.3.0'
     compile 'com.google.android.gms:play-services:+'
-    compile project(':RichEditText')
+    compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.commonsware.cwac:richedit:0.3.0'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }

@@ -1,1 +1,1 @@
-include ':app', ':RichEditText', ':Donate'
+include ':app'
