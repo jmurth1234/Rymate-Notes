@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2010 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,34 +14,33 @@
 -->
 
 <TwoLineListItem xmlns:android="http://schemas.android.com/apk/res/android"
-                 android:paddingTop="8dip"
-                 android:paddingBottom="16dip"
-                 android:paddingLeft="16dip"
-                 android:paddingRight="16dip"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:minHeight="?android:attr/listPreferredItemHeight"
-                 android:mode="twoLine"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/card"
     android:clickable="false"
     android:elevation="2dp"
-    >
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:mode="twoLine"
+    android:paddingBottom="16dip"
+    android:paddingLeft="16dip"
+    android:paddingRight="16dip"
+    android:paddingTop="8dip">
 
     <net.rymate.notes.ui.RobotoLightTextView
-            android:id="@android:id/text1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+        android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <net.rymate.notes.ui.RobotoLightItalicsTextView
-            android:id="@android:id/text2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@android:id/text1"
-            android:layout_alignStart="@android:id/text1"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:maxLines="3"
-            android:textStyle="italic"/>
+        android:id="@android:id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@android:id/text1"
+        android:layout_below="@android:id/text1"
+        android:maxLines="3"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="italic" />
 
 </TwoLineListItem>

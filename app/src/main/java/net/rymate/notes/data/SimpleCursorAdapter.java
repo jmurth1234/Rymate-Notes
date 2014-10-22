@@ -19,6 +19,7 @@ package net.rymate.notes.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Outline;
 import android.net.Uri;
 import android.text.Html;
 import android.view.View;
@@ -141,10 +142,10 @@ public class SimpleCursorAdapter extends ResourceCursorAdapter {
         final int[] to = mTo;
 
         for (int i = 0; i < count; i++) {
-            final View v = view.findViewById(to[i]);
-            if (v != null) {
-                boolean bound = false;
-                if (binder != null) {
+                final View v = view.findViewById(to[i]);
+                    if (v != null) {
+                        boolean bound = false;
+                        if (binder != null) {
                     bound = binder.setViewValue(v, cursor, from[i]);
                 }
 

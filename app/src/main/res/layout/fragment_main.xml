@@ -10,6 +10,7 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"/>
+        android:paddingRight="4dp"
+        android:fastScrollEnabled="true" />
 </LinearLayout>
 
