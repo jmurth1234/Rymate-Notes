@@ -35,10 +35,12 @@ import net.rymate.notes.R;
 import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.fragments.DeleteNoteDialogFragment;
 import net.rymate.notes.fragments.IntroFragment;
+import net.rymate.notes.fragments.NoteEditDialogFragment;
 import net.rymate.notes.fragments.NoteEditFragment;
 import net.rymate.notes.fragments.NoteViewFragment;
 import net.rymate.notes.fragments.NotesListFragment;
 import net.rymate.notes.ui.FloatingActionButton;
+import net.rymate.notes.ui.UIUtils;
 
 /**
  * Created by Ryan on 05/07/13.
@@ -66,6 +68,7 @@ public class NotesListActivity extends ActionBarActivity
     private NotesListFragment list;
     private LinearLayout mDrawerLinear;
     private NoteViewFragment fragment;
+    private NoteEditFragment editFragment;
 
 
     @Override
@@ -90,20 +93,23 @@ public class NotesListActivity extends ActionBarActivity
         }
 
 
-        if (!mTwoPane) {
-            final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
-            mFab.init(Color.parseColor("#1e90ff"));
-            mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_add));
-            mFab.showFab();
+        if (UIUtils.hasICS()) {
+            if (!mTwoPane) {
+                final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
+                mFab.init(Color.parseColor("#1e90ff"));
+                mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_add));
+                mFab.showFab();
 
-            mFab.setOnClickListener(this);
+                mFab.setOnClickListener(this);
 
-            list = new NotesListFragment(mFab);
+                list = new NotesListFragment(mFab);
+            } else {
+                list = new NotesListFragment();
+            }
         } else {
             list = new NotesListFragment();
-            list.setActivateOnItemClick(true);
-        }
 
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_toolbar);
         setSupportActionBar(toolbar);
@@ -180,6 +186,8 @@ public class NotesListActivity extends ActionBarActivity
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
+            list.setActivateOnItemClick(true);
+            //list.setActivatedPosition(RowID.intValue());
             Bundle arguments = new Bundle();
             arguments.putLong(NotesDbAdapter.KEY_ROWID, RowID);
             fragment = new NoteViewFragment();
@@ -204,7 +212,11 @@ public class NotesListActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity, menu);
+        if (!mTwoPane)
+            inflater.inflate(R.menu.main_activity, menu);
+        else
+            inflater.inflate(R.menu.main_activity_tablet, menu);
+
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -278,39 +290,28 @@ public class NotesListActivity extends ActionBarActivity
         }
         switch (item.getItemId()) {
             case R.id.new_note:
-                Intent detailIntent = new Intent(this, NoteEditActivity.class);
-                startActivity(detailIntent);
-                return true;
-            case R.id.edit_note:
-                if (mTwoPane) {
-                    // In two-pane mode, show the detail view in this activity by
-                    // adding or replacing the detail fragment using a
-                    // fragment transaction.
-                    Bundle arguments = new Bundle();
-                    arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
-                    NoteEditFragment fragment = new NoteEditFragment(false);
-                    fragment.setArguments(arguments);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.note_container, fragment)
-                            .commit();
-
-                    editing = true;
-
-                    supportInvalidateOptionsMenu();
+                if (!mTwoPane) {
+                    Intent detailIntent = new Intent(this, NoteEditActivity.class);
+                    startActivity(detailIntent);
                 } else {
-                    // In single-pane mode, simply start the detail activity
-                    // for the selected item ID.
-                    Intent intent = new Intent(this, NoteEditActivity.class);
-                    intent.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
-                    startActivity(intent);
+                    NoteEditDialogFragment newFragment = NoteEditDialogFragment.newInstance();
+
+                    newFragment.show(getSupportFragmentManager(), "dialog");
                 }
                 return true;
+            case R.id.edit_note:
+                DialogFragment dialog = NoteEditDialogFragment.newInstance(true);
+                Bundle arguments = new Bundle();
+                arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
+                dialog.setArguments(arguments);
+                dialog.show(getSupportFragmentManager(), "dialog");
+                return true;
             case R.id.save_note:
-                if (editing == true) {
+                if (editing) {
                     // In two-pane mode, show the detail view in this activity by
                     // adding or replacing the detail fragment using a
                     // fragment transaction.
-                    Bundle arguments = new Bundle();
+                    arguments = new Bundle();
                     arguments.putLong(NotesDbAdapter.KEY_ROWID, mRowId);
                     NoteViewFragment fragment = new NoteViewFragment();
                     fragment.setArguments(arguments);
@@ -348,10 +349,10 @@ public class NotesListActivity extends ActionBarActivity
                     }
                 });
 
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.setView(addCategoryView, 0, 0, 0, 0);
+                AlertDialog addCategoryDialog = dialogBuilder.create();
+                addCategoryDialog.setView(addCategoryView, 0, 0, 0, 0);
 
-                dialog.show();
+                addCategoryDialog.show();
 
                 return true;
             default:
@@ -439,6 +440,9 @@ public class NotesListActivity extends ActionBarActivity
         startActivity(detailIntent);
     }
 
+    public NotesListFragment getList() {
+        return list;
+    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

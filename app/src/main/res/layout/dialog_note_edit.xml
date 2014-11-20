@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/note_edit_fragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/note_edit_dialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minWidth="300dp"
+    android:minHeight="400dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -29,7 +31,7 @@
     </LinearLayout>
 
 
-    <EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.commonsware.cwac.richedit.RichEditText xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/note_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

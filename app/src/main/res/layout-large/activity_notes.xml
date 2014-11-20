@@ -16,20 +16,19 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 
-    <android.support.v4.widget.DrawerLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/drawer_layout"
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".NotesListActivity"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        tools:context=".NotesListActivity">
 
-    <!--
-    This layout is a two-pane layout for Rymate Notes. This layout should
-    replace the main activity on tablets :o
-    -->
-    <LinearLayout
+        <!--
+        This layout is a two-pane layout for Rymate Notes. This layout should
+        replace the main activity on tablets :o
+        -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
@@ -39,38 +38,40 @@
             android:orientation="horizontal"
             android:showDividers="middle">
 
-        <FrameLayout
+            <FrameLayout
                 android:id="@+id/note_list_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"/>
+                android:layout_weight="2" />
 
-        <FrameLayout
+            <FrameLayout
                 android:id="@+id/note_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:fillViewport="false"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
                 android:layout_weight="3"
-                tools:ignore="MergeRootFrame"/>
+                android:fillViewport="false"
+                tools:ignore="MergeRootFrame" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <!-- The navigation drawer -->
-    <LinearLayout
-        android:id="@+id/left_drawer"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/cat_list"
-            android:layout_width="match_parent"
+        <!-- The navigation drawer -->
+        <LinearLayout
+            android:id="@+id/left_drawer"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"
-            android:background="?catBackColour" />
-    </LinearLayout>
-</android.support.v4.widget.DrawerLayout>
+            android:layout_gravity="start"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/cat_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?catBackColour"
+                android:choiceMode="singleChoice"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+        </LinearLayout>
+    </android.support.v4.widget.DrawerLayout>
 </FrameLayout>

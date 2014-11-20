@@ -1,26 +1,21 @@
 package net.rymate.notes.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.style.CharacterStyle;
-import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
-import android.view.ActionMode;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -38,7 +33,7 @@ import java.util.Calendar;
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditFragment extends Fragment implements Button.OnClickListener{
+public class NoteEditDialogFragment extends DialogFragment implements Button.OnClickListener{
 
     private EditText mTitleText;
     private EditText mBodyText;
@@ -50,13 +45,22 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
     private Button mSaveButton;
     private Button mCancelButton;
 
-    public NoteEditFragment(boolean b) {
+    public NoteEditDialogFragment(boolean b) {
         this.newNote = b;
+    }
+
+    public static NoteEditDialogFragment newInstance(boolean b) {
+        return new NoteEditDialogFragment(b);
+    }
+
+    public static NoteEditDialogFragment newInstance() {
+        return new NoteEditDialogFragment(true);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_FRAME, R.style.Theme_Rymatenotes_Dialog);
         mDbHelper = new NotesDbAdapter(this.getActivity());
         mDbHelper.open();
 
@@ -84,6 +88,8 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
                 if (!noteText.equals("")) {
                     mRowId = null;
                 }
+            } else {
+                mRowId = bundle.getLong(NotesDbAdapter.KEY_ROWID);
             }
         }
     }
@@ -91,7 +97,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_note_edit, container, false);
+        View rootView = inflater.inflate(R.layout.dialog_note_edit, container, false);
 
         mTitleText = (EditText) rootView.findViewById(R.id.title);
         mBodyText = (EditText) rootView.findViewById(R.id.note_body);
@@ -103,13 +109,18 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
         mCancelButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
 
-        if (UIUtils.hasICS()) {
-            mBodyText.setCustomSelectionActionModeCallback(new StyleCallback());
-        }
+        //mBodyText.enableActionModes(true);
+        //mBodyText.enableActionModes(true);
 
         populateFields();
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        autoSize();
     }
 
     private void populateFields() {
@@ -164,7 +175,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
     @Override
     public void onPause() {
         super.onPause();
-        //saveState(false);
+        //saveState();
     }
 
     @Override
@@ -182,13 +193,22 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.save_note) {
-            saveState(false);
+            saveState();
         } else {
-            getActivity().finish();
+            this.getDialog().dismiss();
         }
     }
 
-    public void saveState(boolean twoPane) {
+    public void autoSize() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int width = (int) (displaymetrics.widthPixels * (UIUtils.isPortrait(this.getActivity()) ? 0.95 : 0.65));
+        int height = (int) (displaymetrics.heightPixels * (UIUtils.isPortrait(this.getActivity()) ? 0.65 : 0.95));
+
+        getDialog().getWindow().setLayout(width, height);
+    }
+
+    public void saveState() {
         String title = mTitleText.getText().toString();
         Editable body = mBodyText.getText();
         String bodyText = Html.toHtml(body);
@@ -224,62 +244,14 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
         if (saved) {
             Toast toast = Toast.makeText(context, R.string.note_saved, duration);
             toast.show();
-            if (!twoPane) {
-                Intent i = new Intent(this.getActivity(), NoteViewActivity.class);
-                i.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
-                NavUtils.navigateUpTo(this.getActivity(), i);
-            }
+            NotesListActivity notesListActivity = (NotesListActivity) getActivity();
+            notesListActivity.getList().fillData(category);
+            notesListActivity.onItemSelected(mRowId);
+            this.getDialog().dismiss();
         } else {
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
             toast.show();
 
-        }
-    }
-
-    private class StyleCallback implements ActionMode.Callback {
-
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.actionmode_style, menu);
-            menu.removeItem(android.R.id.selectAll);
-            return true;
-        }
-
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            CharacterStyle cs;
-            int start = mBodyText.getSelectionStart();
-            int end = mBodyText.getSelectionEnd();
-            SpannableStringBuilder ssb = new SpannableStringBuilder(mBodyText.getText());
-
-            switch (item.getItemId()) {
-
-                case R.id.bold:
-                    cs = new StyleSpan(Typeface.BOLD);
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-
-                case R.id.italic:
-                    cs = new StyleSpan(Typeface.ITALIC);
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-
-                case R.id.underline:
-                    cs = new UnderlineSpan();
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-            }
-            return false;
-        }
-
-        public void onDestroyActionMode(ActionMode mode) {
         }
     }
 }

@@ -26,6 +26,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+import org.apache.commons.lang.StringEscapeUtils;
+
+import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml;
 
 /**
  * An easy adapter to map columns from a cursor to TextViews or ImageViews
@@ -154,8 +157,7 @@ public class SimpleCursorAdapter extends ResourceCursorAdapter {
                     if (text == null) {
                         text = "";
                     }
-                    if (text.contains("</p>"))
-                        text = Html.fromHtml(text).toString();
+                    text = text.replaceAll("\\<[^>]*>","");
 
                     if (v instanceof TextView) {
                         setViewText((TextView) v, text);

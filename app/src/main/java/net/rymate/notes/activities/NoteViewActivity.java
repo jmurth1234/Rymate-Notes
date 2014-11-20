@@ -109,7 +109,7 @@ public class NoteViewActivity extends ActionBarActivity
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
-                NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
+                this.finish();
                 return true;
             case R.id.edit_note:
                 Intent i = new Intent(this, NoteEditActivity.class);

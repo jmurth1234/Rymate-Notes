@@ -103,7 +103,7 @@ public class NoteEditActivity extends ActionBarActivity {
                 NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
                 return true;
             case R.id.save_note:
-                fragment.saveState();
+                fragment.saveState(false);
                 //NavUtils.navigateUpTo(this, new Intent(this, NotesListActivity.class));
 
                 return true;

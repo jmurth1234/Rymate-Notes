@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import net.rymate.notes.R;
 import net.rymate.notes.data.NotesDbAdapter;
+import net.rymate.notes.data.NotesRecyclerAdapter;
 import net.rymate.notes.data.SimpleCursorAdapter;
 import net.rymate.notes.ui.FloatingActionButton;
 
@@ -35,7 +37,7 @@ import java.util.List;
  * Created by Ryan on 04/07/13.
  */
 public class NotesListFragment extends Fragment
-        implements DeleteNoteDialogFragment.DeleteNoteDialogListener, ListView.OnItemClickListener {
+        implements DeleteNoteDialogFragment.DeleteNoteDialogListener, ListView.OnItemClickListener, NotesRecyclerAdapter.OnItemClickListener {
 
     /**
      * The serialization key representing the selected note.
@@ -70,6 +72,8 @@ public class NotesListFragment extends Fragment
     private long noteId;
     private TextView mProgressText;
     private RelativeLayout mProgressContainer;
+    private int category;
+    private RecyclerView mNotesRecycler;
 
 
     public NotesListFragment(FloatingActionButton fab) {
@@ -96,20 +100,29 @@ public class NotesListFragment extends Fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mNoteslist = (AbsListView) rootView.findViewById(R.id.listView);
-        mNoteslist.setOnItemClickListener(this);
+        //mNoteslist = (AbsListView) rootView.findViewById(R.id.listView);
+        //mNoteslist.setOnItemClickListener(this);
+        
+        mNotesRecycler = (RecyclerView) rootView.findViewById(R.id.listView);
 
         if (fab != null) {
-            getListView().setOnScrollListener(new ListView.OnScrollListener() {
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    // TODO Auto-generated method stub
-                }
-
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if (scrollState > 0)
-                        fab.hideFab();
-                    else
+            mNotesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE) {
                         fab.showFab();
+                    }
+
+                    if(newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        fab.hideFab();
+                    }
+
+
+                    if(newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        fab.showFab();
+                    }
+
+
                 }
             });
         }
@@ -122,25 +135,15 @@ public class NotesListFragment extends Fragment
     public void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
 
-        this.getActivity().startManagingCursor(notesCursor);
-
-        // Create an array to specify the fields we want to display in the list
-        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
-
-        // and an array of the fields we want to bind those fields to (in this case just text1)
-        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
-
-        // Now create a simple cursor adapter and set it to display
-        SimpleCursorAdapter notes =
-                new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
-        setListAdapter(notes);
-    }
-
-    private void setListAdapter(SimpleCursorAdapter notes) {
-        mNoteslist.setAdapter(notes);
+        NotesRecyclerAdapter notes = new NotesRecyclerAdapter(notesCursor, getActivity());
+        notes.SetOnItemClickListener(this);
+        mNotesRecycler.setAdapter(notes);
+        mNotesRecycler.setHasFixedSize(true);
+        mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     public void fillData(int catId) {
+        category = catId;
         Cursor notesCursor;
         if (catId == 0) {
             //  get ALL THE NOTES
@@ -156,19 +159,12 @@ public class NotesListFragment extends Fragment
             // get ALL the notes in a category
             notesCursor = mDbHelper.fetchNotes(catId);
         }
-        this.getActivity().startManagingCursor(notesCursor);
 
-        // Create an array to specify the fields we want to display in the list
-        String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
-
-        // and an array of the fields we want to bind those fields to (in this case just text1)
-        int[] to = new int[]{android.R.id.text1, android.R.id.text2};
-
-        // Now create a simple cursor adapter and set it to display
-        SimpleCursorAdapter notes =
-                new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
-
-        setListAdapter(notes);
+        NotesRecyclerAdapter notes = new NotesRecyclerAdapter(notesCursor, getActivity());
+        notes.SetOnItemClickListener(this);
+        mNotesRecycler.setAdapter(notes);
+        mNotesRecycler.setHasFixedSize(true);
+        mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     public void search(String s) {
@@ -178,19 +174,12 @@ public class NotesListFragment extends Fragment
 
         if (!s.isEmpty()) {
             Cursor notesCursor = mDbHelper.searchNotes(s);
-            this.getActivity().startManagingCursor(notesCursor);
 
-            // Create an array to specify the fields we want to display in the list
-            String[] from = new String[]{NotesDbAdapter.KEY_TITLE, NotesDbAdapter.KEY_BODY};
-
-            // and an array of the fields we want to bind those fields to (in this case just text1)
-            int[] to = new int[]{android.R.id.text1, android.R.id.text2};
-
-            // Now create a simple cursor adapter and set it to display
-            SimpleCursorAdapter notes =
-                    new SimpleCursorAdapter(this.getActivity(), R.layout.notes_row, notesCursor, from, to);
-
-            setListAdapter(notes);
+            NotesRecyclerAdapter notes = new NotesRecyclerAdapter(notesCursor, getActivity());
+            notes.SetOnItemClickListener(this);
+            mNotesRecycler.setAdapter(notes);
+            mNotesRecycler.setHasFixedSize(true);
+            mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
     }
 
@@ -252,7 +241,8 @@ public class NotesListFragment extends Fragment
             v.setChoiceMode(ListView.CHOICE_MODE_NONE);
         }
     }
-    private void setActivatedPosition(int position) {
+
+    public void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {
@@ -266,6 +256,7 @@ public class NotesListFragment extends Fragment
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
+        Log.i("test", "clicked an item");
         mCallbacks.onItemSelected(l);
     }
 
@@ -292,7 +283,7 @@ public class NotesListFragment extends Fragment
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         mDbHelper.deleteNote(noteId);
-        this.fillData();
+        this.fillData(category);
         Context context = getActivity().getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, R.string.note_deleted, duration);
@@ -313,6 +304,12 @@ public class NotesListFragment extends Fragment
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Log.i("test", "clicked an item");
+        mCallbacks.onItemSelected((long) position);
     }
 
     /**

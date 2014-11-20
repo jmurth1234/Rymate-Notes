@@ -108,7 +108,7 @@ public class NoteViewFragment extends Fragment {
                 mBodyText.setFocusableInTouchMode(true);
                 mBodyText.requestFocus();
 
-                getActivity().invalidateOptionsMenu();
+                getActivity().supportInvalidateOptionsMenu();
 
                 imeManager = (InputMethodManager) getActivity().getApplicationContext().getSystemService("input_method");
                 imeManager.showSoftInput(mBodyText, 0);
@@ -153,7 +153,7 @@ public class NoteViewFragment extends Fragment {
 
     public void saveNote() {
         setEditing(false);
-        getActivity().invalidateOptionsMenu();
+        getActivity().supportInvalidateOptionsMenu();
         mBodyText.setFocusable(false);
         mBodyText.setFocusableInTouchMode(false);
         imeManager.hideSoftInputFromWindow(mBodyText.getWindowToken(), 0);
