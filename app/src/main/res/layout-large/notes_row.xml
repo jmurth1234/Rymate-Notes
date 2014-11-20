@@ -20,7 +20,7 @@
     android:layout_marginTop="6dp"
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp"
-    android:layout_marginBottom="255dp"
+    android:layout_marginBottom="4dp"
     android:clickable="true"
     android:elevation="2dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
