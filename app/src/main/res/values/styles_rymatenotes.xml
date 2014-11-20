@@ -21,6 +21,7 @@
     <color name="second_grey">#fff0f0f0</color>
     <color name="card_white">#ffffffff</color>
     <color name="card_selected">#ffdddddd</color>
+    <attr name="catBackColour" format="reference|color" />
     <color name="card_shadow">#8c666666</color>
 
     <style name="Theme.Rymatenotes" parent="Theme.AppCompat.Light.NoActionBar">

@@ -54,13 +54,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name="net.rymate.notes.activities.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.rymate.notes.activities.NotesListActivity" />
-        </activity>
     </application>
 
 </manifest>

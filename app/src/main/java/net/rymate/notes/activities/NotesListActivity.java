@@ -97,7 +97,7 @@ public class NotesListActivity extends ActionBarActivity
             if (!mTwoPane) {
                 final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
                 mFab.init(Color.parseColor("#1e90ff"));
-                mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_add));
+                mFab.setFabDrawable(getResources().getDrawable(R.drawable.ic_action_new));
                 mFab.showFab();
 
                 mFab.setOnClickListener(this);

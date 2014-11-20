@@ -15,6 +15,6 @@
         android:paddingTop="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="16dp"
-        android:textColor="#fff"/>
+        android:background="@android:color/transparent" />
 
 </RelativeLayout>

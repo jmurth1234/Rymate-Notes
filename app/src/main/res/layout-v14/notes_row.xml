@@ -24,6 +24,8 @@
     android:clickable="true"
     android:elevation="2dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
+    android:foreground="?android:attr/selectableItemBackground"
+
     android:mode="twoLine"
     card_view:cardCornerRadius="2dp">
 
