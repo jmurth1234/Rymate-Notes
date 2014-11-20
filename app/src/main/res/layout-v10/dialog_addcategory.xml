@@ -4,10 +4,9 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:background="#fff">
     <EditText
         android:id="@+id/category"
-        android:inputType="textEmailAddress"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/new_category"
@@ -15,6 +14,6 @@
         android:paddingTop="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="16dp"
-        android:textColor="#fff"/>
+        android:textColor="#000" />
 
 </RelativeLayout>
