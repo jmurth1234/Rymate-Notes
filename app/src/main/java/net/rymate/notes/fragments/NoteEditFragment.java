@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -227,9 +228,14 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
             if (!twoPane) {
                 Intent i = new Intent(this.getActivity(), NoteViewActivity.class);
                 i.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
-                NavUtils.navigateUpTo(this.getActivity(), i);
+                //NavUtils.navigateUpTo(this.getActivity(), i);
+                TaskStackBuilder.create(this.getActivity())
+                        .addNextIntent(new Intent(this.getActivity(), NotesListActivity.class))
+                        .addNextIntent(i)
+                        .startActivities();
+                getActivity().finish();
             }
-        } else {
+        } else {                                                                                                                                                     00
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
             toast.show();
 
