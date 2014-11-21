@@ -245,6 +245,13 @@ public class NoteEditDialogFragment extends DialogFragment implements Button.OnC
             Toast toast = Toast.makeText(context, R.string.note_saved, duration);
             toast.show();
             NotesListActivity notesListActivity = (NotesListActivity) getActivity();
+
+            if (mDbHelper.fetchAllNotes().getCount() == 1) {
+                notesListActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.note_list_container, notesListActivity.getList())
+                        .commit();
+            }
+
             notesListActivity.getList().fillData(category);
             notesListActivity.onItemSelected(mRowId);
             this.getDialog().dismiss();

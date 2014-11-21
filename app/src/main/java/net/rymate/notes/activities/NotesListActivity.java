@@ -183,6 +183,7 @@ public class NotesListActivity extends ActionBarActivity
     public void onItemSelected(Long RowID) {
         System.out.println("It's happening!");
         if (mTwoPane) {
+            System.out.println("ID = " + RowID);
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -385,8 +386,14 @@ public class NotesListActivity extends ActionBarActivity
 
     @Override
     public void OnNewNoteClickedInIntroFragment() {
-        Intent detailIntent = new Intent(this, NoteEditActivity.class);
-        startActivity(detailIntent);
+        if (!mTwoPane) {
+            Intent detailIntent = new Intent(this, NoteEditActivity.class);
+            startActivity(detailIntent);
+        } else {
+            NoteEditDialogFragment newFragment = NoteEditDialogFragment.newInstance();
+
+            newFragment.show(getSupportFragmentManager(), "dialog");
+        }
     }
 
     /**

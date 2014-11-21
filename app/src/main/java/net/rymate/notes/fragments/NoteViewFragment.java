@@ -19,7 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
-
 import net.rymate.notes.R;
 import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
@@ -39,6 +38,7 @@ public class NoteViewFragment extends Fragment {
     private String noteText;
     private int categoryId;
     private String noteTitle;
+    private WebView mWebView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +78,7 @@ public class NoteViewFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView;
 
-            rootView = inflater.inflate(R.layout.fragment_note_view, container, false);
-
+        rootView = inflater.inflate(R.layout.fragment_note_view, container, false);
 
         mBodyText = (EditText) rootView.findViewById(R.id.noteView);
         final NoteViewFragment nvf = this;
@@ -125,16 +124,22 @@ public class NoteViewFragment extends Fragment {
     public void updateText() {
         if (mRowId != null) {
             Cursor note = mDbHelper.fetchNote(mRowId);
-            getActivity().startManagingCursor(note);
-            noteTitle = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE));
-            noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
-            categoryId = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
-            Spanned formattedBody = Html.fromHtml(noteText);
-            mBodyText.setText(formattedBody);
-            if (getActivity().getClass() == NoteViewActivity.class) {
-                NoteViewActivity activity = (NoteViewActivity) getActivity();
-                activity.getSupportActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
-                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (note == null) {
+                return;
+            }
+            if (note.moveToFirst()) {
+                noteTitle = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE));
+                noteText = note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_BODY));
+                categoryId = note.getInt(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_CATID));
+                Spanned formattedBody = Html.fromHtml(noteText);
+                mBodyText.setText(formattedBody);
+                if (getActivity().getClass() == NoteViewActivity.class) {
+                    NoteViewActivity activity = (NoteViewActivity) getActivity();
+                    activity.getSupportActionBar().setTitle(note.getString(note.getColumnIndexOrThrow(NotesDbAdapter.KEY_TITLE)));
+                    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }
+            } else {
+                System.out.println("Jesus christ what happened!");
             }
         }
     }
@@ -159,8 +164,6 @@ public class NoteViewFragment extends Fragment {
         imeManager.hideSoftInputFromWindow(mBodyText.getWindowToken(), 0);
         mDbHelper.updateNote(mRowId, noteTitle, Html.toHtml(mBodyText.getText()), categoryId);
     }
-
-    private WebView mWebView;
 
     public void printNote() {
         // Create a WebView object specifically for printing

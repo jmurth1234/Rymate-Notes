@@ -237,9 +237,7 @@ public class NotesDbAdapter {
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
                     KEY_TITLE, KEY_BODY, KEY_CATID}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-        }
+
         return mCursor;
 
     }
