@@ -102,7 +102,7 @@ public class NotesListFragment extends Fragment
 
         //mNoteslist = (AbsListView) rootView.findViewById(R.id.listView);
         //mNoteslist.setOnItemClickListener(this);
-        
+
         mNotesRecycler = (RecyclerView) rootView.findViewById(R.id.listView);
 
         if (fab != null) {
