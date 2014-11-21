@@ -235,7 +235,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
                         .startActivities();
                 getActivity().finish();
             }
-        } else {                                                                                                                                                     00
+        } else {
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
             toast.show();
 
