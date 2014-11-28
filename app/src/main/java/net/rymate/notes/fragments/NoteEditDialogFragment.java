@@ -148,7 +148,7 @@ public class NoteEditDialogFragment extends DialogFragment implements Button.OnC
 
         if (mRowId != null) {
             note = mDbHelper.fetchNote(mRowId);
-            getActivity().startManagingCursor(note);
+            note.moveToFirst();
             mTitleText.setText(note.getString(
                     note.getColumnIndex(NotesDbAdapter.KEY_TITLE)));
             mBodyText.setText(Html.fromHtml(note.getString(
