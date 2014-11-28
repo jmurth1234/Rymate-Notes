@@ -32,6 +32,7 @@ import net.rymate.notes.R;
 import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.data.NotesDbAdapter;
+import net.rymate.notes.ui.StyleCallback;
 import net.rymate.notes.ui.UIUtils;
 
 import java.util.Calendar;
@@ -105,7 +106,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
         mSaveButton.setOnClickListener(this);
 
         if (UIUtils.hasICS()) {
-            mBodyText.setCustomSelectionActionModeCallback(new StyleCallback());
+            mBodyText.setCustomSelectionActionModeCallback(new StyleCallback(mBodyText));
         }
 
         populateFields();
@@ -133,7 +134,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
 
         if (mRowId != null) {
             note = mDbHelper.fetchNote(mRowId);
-            getActivity().startManagingCursor(note);
+            note.moveToFirst();
             mTitleText.setText(note.getString(
                     note.getColumnIndex(NotesDbAdapter.KEY_TITLE)));
             mBodyText.setText(Html.fromHtml(note.getString(
@@ -239,53 +240,6 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
             toast.show();
 
-        }
-    }
-
-    private class StyleCallback implements ActionMode.Callback {
-
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.actionmode_style, menu);
-            menu.removeItem(android.R.id.selectAll);
-            return true;
-        }
-
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            CharacterStyle cs;
-            int start = mBodyText.getSelectionStart();
-            int end = mBodyText.getSelectionEnd();
-            SpannableStringBuilder ssb = new SpannableStringBuilder(mBodyText.getText());
-
-            switch (item.getItemId()) {
-
-                case R.id.bold:
-                    cs = new StyleSpan(Typeface.BOLD);
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-
-                case R.id.italic:
-                    cs = new StyleSpan(Typeface.ITALIC);
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-
-                case R.id.underline:
-                    cs = new UnderlineSpan();
-                    ssb.setSpan(cs, start, end, 1);
-                    mBodyText.setText(ssb);
-                    return true;
-            }
-            return false;
-        }
-
-        public void onDestroyActionMode(ActionMode mode) {
         }
     }
 }

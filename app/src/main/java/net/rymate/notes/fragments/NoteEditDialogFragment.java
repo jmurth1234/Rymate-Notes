@@ -26,9 +26,12 @@ import net.rymate.notes.R;
 import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.data.NotesDbAdapter;
+import net.rymate.notes.ui.StyleCallback;
 import net.rymate.notes.ui.UIUtils;
 
 import java.util.Calendar;
+
+import static net.rymate.notes.fragments.NoteEditFragment.*;
 
 /**
  * Created by Ryan on 07/08/13.
@@ -109,8 +112,10 @@ public class NoteEditDialogFragment extends DialogFragment implements Button.OnC
         mCancelButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
 
-        //mBodyText.enableActionModes(true);
-        //mBodyText.enableActionModes(true);
+        if (UIUtils.hasICS()) {
+            mBodyText.setCustomSelectionActionModeCallback(new StyleCallback(mBodyText));
+        }
+
 
         populateFields();
 

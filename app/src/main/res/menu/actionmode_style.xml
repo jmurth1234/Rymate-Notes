@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="AppCompatResource" >
     <item android:id="@+id/bold"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/ic_action_bold"
         android:title="Bold"/>
     <item android:id="@+id/italic"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/ic_action_italics"
         android:title="Italic"/>
     <item android:id="@+id/underline"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/ic_action_underline"
         android:title="Underline"/>
 </menu>
