@@ -144,6 +144,7 @@ public abstract class CursorRecyclerAdapter<VH
             if (mChangeObserver != null) oldCursor.unregisterContentObserver(mChangeObserver);
             if (mDataSetObserver != null) oldCursor.unregisterDataSetObserver(mDataSetObserver);
         }
+		int itemCount = getItemCount();
         mCursor = newCursor;
         if (newCursor != null) {
             if (mChangeObserver != null) newCursor.registerContentObserver(mChangeObserver);
@@ -157,7 +158,7 @@ public abstract class CursorRecyclerAdapter<VH
             mDataValid = false;
 // notify the observers about the lack of a data set
 // notifyDataSetInvalidated();
-            notifyItemRangeRemoved(0, getItemCount());
+            notifyItemRangeRemoved(0, itemCount);
         }
         return oldCursor;
     }
