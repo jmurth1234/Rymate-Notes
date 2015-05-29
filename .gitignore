@@ -1,6 +1,7 @@
 .gradle
 /local.properties
 /.idea/workspace.xml
+.idea/*
 .DS_Store
 app/src/main/res/values/adstring.xml
 app/build/

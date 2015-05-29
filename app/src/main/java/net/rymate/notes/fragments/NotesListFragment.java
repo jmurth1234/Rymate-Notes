@@ -1,22 +1,33 @@
 package net.rymate.notes.fragments;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MergeCursor;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,7 +39,6 @@ import net.rymate.notes.R;
 import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.data.NotesRecyclerAdapter;
 import net.rymate.notes.data.SimpleCursorAdapter;
-import net.rymate.notes.ui.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +84,9 @@ public class NotesListFragment extends Fragment
     private RelativeLayout mProgressContainer;
     private int category;
     private RecyclerView mNotesRecycler;
+    private int mScreenHeight;
+    private boolean mHidden;
+    private float currentY;
 
 
     public NotesListFragment(FloatingActionButton fab) {
@@ -106,20 +119,26 @@ public class NotesListFragment extends Fragment
         mNotesRecycler = (RecyclerView) rootView.findViewById(R.id.listView);
 
         if (fab != null) {
+            WindowManager mWindowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+            Display display = mWindowManager.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            mScreenHeight = size.y;
+
             mNotesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    if(newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        fab.showFab();
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        showFab();
                     }
 
-                    if(newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        fab.hideFab();
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        hideFab();
                     }
 
 
-                    if(newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                        fab.showFab();
+                    if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        showFab();
                     }
 
 
@@ -132,6 +151,69 @@ public class NotesListFragment extends Fragment
         return rootView;
     }
 
+    public void hideFab() {
+        if (!mHidden) {
+            if (currentY == 0) {
+                currentY = fab.getY();
+            }
+            ObjectAnimator mHideAnimation = ObjectAnimator.ofFloat(this, "Y", mScreenHeight);
+            mHideAnimation.setTarget(fab);
+            mHideAnimation.setInterpolator(new AccelerateInterpolator());
+            mHideAnimation.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mHidden = true;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            mHideAnimation.start();
+        }
+    }
+
+    public void showFab() {
+        if (mHidden) {
+            ObjectAnimator mShowAnimation = ObjectAnimator.ofFloat(this, "Y", currentY);
+            mShowAnimation.setTarget(fab);
+            mShowAnimation.setInterpolator(new DecelerateInterpolator());
+            mShowAnimation.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mHidden = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            mShowAnimation.start();
+        }
+    }
+
     public void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
 
@@ -139,8 +221,29 @@ public class NotesListFragment extends Fragment
         notes.SetOnItemClickListener(this);
         mNotesRecycler.setAdapter(notes);
         mNotesRecycler.setHasFixedSize(true);
-        mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        setNotesLayoutManager();
+
     }
+
+    private void setNotesLayoutManager() {
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+
+        if ((widthPixels < heightPixels) && ((getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE)) {
+            // on a portrait tablet device
+            mNotesRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+        } else {
+            mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        }
+    }
+
 
     public void fillData(int catId) {
         category = catId;
@@ -164,7 +267,7 @@ public class NotesListFragment extends Fragment
         notes.SetOnItemClickListener(this);
         mNotesRecycler.setAdapter(notes);
         mNotesRecycler.setHasFixedSize(true);
-        mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        setNotesLayoutManager();
     }
 
     public void search(String s) {
@@ -179,7 +282,7 @@ public class NotesListFragment extends Fragment
             notes.SetOnItemClickListener(this);
             mNotesRecycler.setAdapter(notes);
             mNotesRecycler.setHasFixedSize(true);
-            mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+            setNotesLayoutManager();
         }
     }
 

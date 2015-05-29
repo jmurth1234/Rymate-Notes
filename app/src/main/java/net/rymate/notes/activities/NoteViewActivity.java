@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +25,7 @@ import net.rymate.notes.ui.UIUtils;
 /**
  * Created by Ryan on 05/07/13.
  */
-public class NoteViewActivity extends ActionBarActivity
+public class NoteViewActivity extends AppCompatActivity
         implements DeleteNoteDialogFragment.DeleteNoteDialogListener {
 
     Long mRowId;

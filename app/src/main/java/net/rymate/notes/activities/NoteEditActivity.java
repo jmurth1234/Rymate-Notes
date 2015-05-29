@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ import net.rymate.notes.fragments.NoteEditFragment;
 /**
  * Created by Ryan on 07/08/13.
  */
-public class NoteEditActivity extends ActionBarActivity {
+public class NoteEditActivity extends AppCompatActivity {
     Long mRowId;
     NoteEditFragment fragment = null;
 
