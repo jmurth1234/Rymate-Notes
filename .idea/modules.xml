@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Rymate-Notes.iml" filepath="$PROJECT_DIR$/Rymate-Notes.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RymateNotes.iml" filepath="$PROJECT_DIR$/RymateNotes.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
-
