@@ -298,9 +298,6 @@ public class NotesListActivity extends AppCompatActivity
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.new_note:
-
-                return true;
             case R.id.edit_note:
                 DialogFragment dialog = NoteEditDialogFragment.newInstance(true);
                 Bundle arguments = new Bundle();
