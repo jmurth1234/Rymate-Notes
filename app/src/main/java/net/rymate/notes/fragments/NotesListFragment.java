@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MergeCursor;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,9 +38,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
+import net.rymate.notes.activities.NoteEditActivity;
+import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.data.NotesRecyclerAdapter;
 import net.rymate.notes.data.SimpleCursorAdapter;
+import net.rymate.notes.ui.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +92,7 @@ public class NotesListFragment extends Fragment
     private int mScreenHeight;
     private boolean mHidden;
     private float currentY;
+    private boolean portraitTablet;
 
 
     public NotesListFragment(FloatingActionButton fab) {
@@ -118,32 +124,25 @@ public class NotesListFragment extends Fragment
 
         mNotesRecycler = (RecyclerView) rootView.findViewById(R.id.listView);
 
-        if (fab != null) {
-            WindowManager mWindowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-            Display display = mWindowManager.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            mScreenHeight = size.y;
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fabbutton);
+        fab.setRippleColor(Color.parseColor("#1e90ff"));
 
-            mNotesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        showFab();
-                    }
-
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        hideFab();
-                    }
-
-
-                    if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                        showFab();
-                    }
-
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!((NotesListActivity)getActivity()).mTwoPane) {
+                    Intent detailIntent = new Intent(view.getContext(), NoteEditActivity.class);
+                    startActivity(detailIntent);
+                    getActivity().overridePendingTransition(R.anim.swap_in_bottom, R.anim.swap_out_bottom);
+                } else {
+                    NoteEditDialogFragment newFragment = NoteEditDialogFragment.newInstance();
+                    newFragment.show(getActivity().getSupportFragmentManager(), "dialog");
                 }
-            });
+            }
+        });
+
+        if (rootView.findViewById(R.id.portraitTablet) != null) {
+            portraitTablet = true;
         }
 
         fillData();
@@ -151,68 +150,6 @@ public class NotesListFragment extends Fragment
         return rootView;
     }
 
-    public void hideFab() {
-        if (!mHidden) {
-            if (currentY == 0) {
-                currentY = fab.getY();
-            }
-            ObjectAnimator mHideAnimation = ObjectAnimator.ofFloat(this, "Y", mScreenHeight);
-            mHideAnimation.setTarget(fab);
-            mHideAnimation.setInterpolator(new AccelerateInterpolator());
-            mHideAnimation.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mHidden = true;
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            mHideAnimation.start();
-        }
-    }
-
-    public void showFab() {
-        if (mHidden) {
-            ObjectAnimator mShowAnimation = ObjectAnimator.ofFloat(this, "Y", currentY);
-            mShowAnimation.setTarget(fab);
-            mShowAnimation.setInterpolator(new DecelerateInterpolator());
-            mShowAnimation.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mHidden = false;
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            mShowAnimation.start();
-        }
-    }
 
     public void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
@@ -226,18 +163,9 @@ public class NotesListFragment extends Fragment
     }
 
     private void setNotesLayoutManager() {
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int widthPixels = metrics.widthPixels;
-        int heightPixels = metrics.heightPixels;
-
-        if ((widthPixels < heightPixels) && ((getResources().getConfiguration().screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE)) {
+        if (portraitTablet) {
             // on a portrait tablet device
             mNotesRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
         } else {
             mNotesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 

@@ -3,6 +3,7 @@ package net.rymate.notes.activities;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.ParcelFileDescriptor;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -36,6 +39,15 @@ public class NotesBackupActivity extends AppCompatActivity
     private static final int REQUEST_CODE_CREATOR = 4343434;
     private GoogleApiClient mGoogleApiClient;
     private NotesDbAdapter mDbHelper;
+    private View.OnClickListener backupButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            saveNotes();
+        }
+    };
+    private Button backupButton;
+    private Button restoreButton;
+    private View.OnClickListener restoreButtonListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +69,24 @@ public class NotesBackupActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
+
+        backupButton = (Button) findViewById(R.id.backup_notes);
+        backupButton.setOnClickListener(backupButtonListener);
+        backupButton.setEnabled(false);
+
+        restoreButton = (Button) findViewById(R.id.restore_notes);
+        restoreButton.setOnClickListener(restoreButtonListener);
+        restoreButton.setEnabled(false);
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        Snackbar.make(this.findViewById(R.id.backup_activity), "Connected to Google Drive!", Snackbar.LENGTH_LONG).show();
+        backupButton.setEnabled(true);
+    }
+
+    private void saveNotes() {
         ResultCallback<DriveApi.DriveContentsResult> newFileCallback = new ResultCallback<DriveApi.DriveContentsResult>() {
             @Override
             public void onResult(DriveApi.DriveContentsResult result) {

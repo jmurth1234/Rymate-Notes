@@ -69,7 +69,7 @@ import java.io.Writer;
 public class NotesListActivity extends AppCompatActivity
         implements NotesListFragment.Callbacks,
         DeleteNoteDialogFragment.DeleteNoteDialogListener,
-        IntroFragment.OnNewNoteClickedInIntroFragmentListener, View.OnClickListener {
+        IntroFragment.OnNewNoteClickedInIntroFragmentListener {
 
 
 
@@ -79,7 +79,7 @@ public class NotesListActivity extends AppCompatActivity
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    public boolean mTwoPane;
     private Long mRowId;
     private boolean selected;
     private boolean editing;
@@ -116,22 +116,7 @@ public class NotesListActivity extends AppCompatActivity
             FragmentManager fm = getSupportFragmentManager();
         }
 
-
-        if (UIUtils.hasICS()) {
-            if (!mTwoPane) {
-                final FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fabbutton);
-                mFab.setRippleColor(Color.parseColor("#1e90ff"));
-
-                mFab.setOnClickListener(this);
-
-                list = new NotesListFragment(mFab);
-            } else {
-                list = new NotesListFragment();
-            }
-        } else {
-            list = new NotesListFragment();
-
-        }
+        list = new NotesListFragment();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_toolbar);
         setSupportActionBar(toolbar);
@@ -229,6 +214,7 @@ public class NotesListActivity extends AppCompatActivity
             Intent detailIntent = new Intent(this, NoteViewActivity.class);
             detailIntent.putExtra(NotesDbAdapter.KEY_ROWID, RowID);
             startActivity(detailIntent);
+            overridePendingTransition(R.anim.swap_in_bottom, R.anim.swap_out_bottom);
         }
     }
 
@@ -313,14 +299,7 @@ public class NotesListActivity extends AppCompatActivity
         }
         switch (item.getItemId()) {
             case R.id.new_note:
-                if (!mTwoPane) {
-                    Intent detailIntent = new Intent(this, NoteEditActivity.class);
-                    startActivity(detailIntent);
-                } else {
-                    NoteEditDialogFragment newFragment = NoteEditDialogFragment.newInstance();
 
-                    newFragment.show(getSupportFragmentManager(), "dialog");
-                }
                 return true;
             case R.id.edit_note:
                 DialogFragment dialog = NoteEditDialogFragment.newInstance(true);
@@ -464,13 +443,6 @@ public class NotesListActivity extends AppCompatActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         list.onDialogNegativeClick(dialog);
-    }
-
-    // for mFab
-    @Override
-    public void onClick(View view) {
-        Intent detailIntent = new Intent(this, NoteEditActivity.class);
-        startActivity(detailIntent);
     }
 
     public NotesListFragment getList() {

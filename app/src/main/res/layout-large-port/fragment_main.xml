@@ -2,6 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+
+    <View
+        android:layout_width="0dp"
+        android:id="@+id/portraitTablet"
+        android:layout_height="0dp"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -11,7 +17,6 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:fastScrollEnabled="true"
-        android:paddingTop="?attr/actionBarSize"
         android:clipToPadding="false"
         android:paddingBottom="76dp"/>
 

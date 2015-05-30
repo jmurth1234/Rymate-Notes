@@ -72,6 +72,7 @@ public class NoteViewActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -103,14 +104,8 @@ public class NoteViewActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
-                this.finish();
+                finish();
+                overridePendingTransition(R.anim.swap_in_bottom_back, R.anim.swap_out_bottom_back);
                 return true;
             case R.id.edit_note:
                 Intent i = new Intent(this, NoteEditActivity.class);
@@ -129,6 +124,12 @@ public class NoteViewActivity extends AppCompatActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.swap_in_bottom_back, R.anim.swap_out_bottom_back);
     }
 
     public void showDeleteDialog(long noteId) {

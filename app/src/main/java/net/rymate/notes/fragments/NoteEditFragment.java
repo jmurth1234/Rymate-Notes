@@ -187,6 +187,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
             saveState(false);
         } else {
             getActivity().finish();
+            getActivity().overridePendingTransition(R.anim.swap_in_bottom_back, R.anim.swap_out_bottom_back);
         }
     }
 
@@ -235,6 +236,7 @@ public class NoteEditFragment extends Fragment implements Button.OnClickListener
                         .addNextIntent(i)
                         .startActivities();
                 getActivity().finish();
+                getActivity().overridePendingTransition(R.anim.swap_in_bottom_back, R.anim.swap_out_bottom_back);
             }
         } else {
             Toast toast = Toast.makeText(context, R.string.note_failed, durationFailed);
