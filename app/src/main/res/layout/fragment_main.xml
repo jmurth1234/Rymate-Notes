@@ -1,7 +1,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+>
     <android.support.v7.widget.RecyclerView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -11,9 +16,11 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:fastScrollEnabled="true"
-        android:paddingTop="?attr/actionBarSize"
         android:clipToPadding="false"
+        android:paddingTop="?actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingBottom="76dp"/>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabbutton"
@@ -25,5 +32,6 @@
         android:elevation="4dp"
         app:borderWidth="0dp"
         android:src="@drawable/ic_action_new" />
+
 </FrameLayout>
 
