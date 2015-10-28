@@ -1,14 +1,14 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 12
-        versionName "1.4"
+        versionCode 13
+        versionName "1.5"
     }
 
     compileOptions {
@@ -28,7 +28,7 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -48,6 +48,6 @@ dependencies {
     compile 'com.github.johnkil.android-robototextview:robototextview:2.2.0'
     compile 'com.google.code.gson:gson:1.7.2'
     compile 'com.google.android.gms:play-services:7.3.0'
-    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:design:+'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }

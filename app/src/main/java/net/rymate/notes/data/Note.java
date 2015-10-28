@@ -29,4 +29,19 @@ public class Note {
         this.catId = catId;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getCatId() {
+        return catId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

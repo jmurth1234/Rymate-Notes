@@ -5,33 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/note_list_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-
-        <android.support.design.widget.AppBarLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/action_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/action_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:elevation="4dp"
-                android:minHeight="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:layout_scrollFlags="scroll|enterAlways" />
-
-        </android.support.design.widget.AppBarLayout>
-    </android.support.design.widget.CoordinatorLayout>
+        <FrameLayout
+            android:id="@+id/note_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
     <!-- The navigation drawer -->
     <LinearLayout
@@ -39,16 +32,24 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="?catBackColour">
 
         <ListView
             android:id="@+id/cat_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?catBackColour"
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" />
+            android:dividerHeight="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/cat_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_action_add_black"
+            android:text="Add Category"/>
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

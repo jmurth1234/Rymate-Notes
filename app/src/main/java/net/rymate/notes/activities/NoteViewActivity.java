@@ -111,6 +111,7 @@ public class NoteViewActivity extends AppCompatActivity
                 Intent i = new Intent(this, NoteEditActivity.class);
                 i.putExtra(NotesDbAdapter.KEY_ROWID, mRowId);
                 startActivityForResult(i, 2);
+                overridePendingTransition(R.anim.swap_in_bottom, R.anim.swap_out_bottom);
                 return true;
             case R.id.delete_note:
                 showDeleteDialog(mRowId);

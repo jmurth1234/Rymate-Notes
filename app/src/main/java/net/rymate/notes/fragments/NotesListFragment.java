@@ -2,6 +2,7 @@ package net.rymate.notes.fragments;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.database.MergeCursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -32,6 +34,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -130,7 +133,7 @@ public class NotesListFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!((NotesListActivity)getActivity()).mTwoPane) {
+                if (!((NotesListActivity) getActivity()).mTwoPane) {
                     Intent detailIntent = new Intent(view.getContext(), NoteEditActivity.class);
                     startActivity(detailIntent);
                     getActivity().overridePendingTransition(R.anim.swap_in_bottom, R.anim.swap_out_bottom);
@@ -259,6 +262,7 @@ public class NotesListFragment extends Fragment
      * Turns on activate-on-click mode. When this mode is on, list items will be
      * given the 'activated' state when touched.
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
@@ -273,6 +277,7 @@ public class NotesListFragment extends Fragment
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);

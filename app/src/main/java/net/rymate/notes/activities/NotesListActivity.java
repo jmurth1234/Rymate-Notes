@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -140,20 +141,7 @@ public class NotesListActivity extends AppCompatActivity
                 toolbar,  /* toolbar */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
-        ) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle("Rymate Notes");
-                supportInvalidateOptionsMenu();
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle("Categories");
-                supportInvalidateOptionsMenu();
-            }
-        };
+        );
 
         //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1e90ff")));
 
@@ -250,6 +238,39 @@ public class NotesListActivity extends AppCompatActivity
 
         });
 
+        final Context context = this;
+
+        Button catButton = (Button) findViewById(R.id.cat_button);
+        catButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = getLayoutInflater();
+                final View addCategoryView = inflater.inflate(R.layout.dialog_addcategory, null);
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        EditText text = (EditText) addCategoryView.findViewById(R.id.category);
+                        if (text.getText().toString().length() != 0) {
+                            mDbHelper.addCategory(text.getText().toString());
+                        }
+                        getCategories();
+                    }
+                });
+
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                });
+
+                AlertDialog addCategoryDialog = dialogBuilder.create();
+                addCategoryDialog.setView(addCategoryView, 0, 0, 0, 0);
+
+                addCategoryDialog.show();
+            }
+        });
+
 
         return true;
     }
@@ -326,33 +347,6 @@ public class NotesListActivity extends AppCompatActivity
                 return true;
             case R.id.delete_note:
                 list.showDeleteDialog(mRowId);
-                return true;
-            case R.id.new_category:
-                LayoutInflater inflater = getLayoutInflater();
-                final View addCategoryView = inflater.inflate(R.layout.dialog_addcategory, null);
-
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-                dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        EditText text = (EditText) addCategoryView.findViewById(R.id.category);
-                        if (text.getText().toString().length() != 0) {
-                            mDbHelper.addCategory(text.getText().toString());
-                        }
-                        getCategories();
-                    }
-                });
-
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing.
-                    }
-                });
-
-                AlertDialog addCategoryDialog = dialogBuilder.create();
-                addCategoryDialog.setView(addCategoryView, 0, 0, 0, 0);
-
-                addCategoryDialog.show();
-
                 return true;
             case R.id.export_notes:
                 Intent detailIntent = new Intent(this, NotesBackupActivity.class);
