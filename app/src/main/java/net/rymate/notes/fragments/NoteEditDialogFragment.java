@@ -1,21 +1,17 @@
 package net.rymate.notes.fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
+import androidx.fragment.app.DialogFragment;
+import androidx.core.app.NavUtils;
 import android.text.Editable;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -23,15 +19,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import net.rymate.notes.R;
-import net.rymate.notes.activities.NoteViewActivity;
 import net.rymate.notes.activities.NotesListActivity;
 import net.rymate.notes.data.NotesDbAdapter;
 import net.rymate.notes.ui.StyleCallback;
 import net.rymate.notes.ui.UIUtils;
 
 import java.util.Calendar;
-
-import static net.rymate.notes.fragments.NoteEditFragment.*;
 
 /**
  * Created by Ryan on 07/08/13.

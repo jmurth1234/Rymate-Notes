@@ -3,14 +3,11 @@ package net.rymate.notes.activities;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.ParcelFileDescriptor;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBarActivity;
+import com.google.android.material.snackbar.Snackbar;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -33,12 +30,9 @@ import net.rymate.notes.data.NotesDbAdapter;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 public class NotesBackupActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

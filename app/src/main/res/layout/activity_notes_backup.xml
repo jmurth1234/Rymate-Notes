@@ -7,7 +7,7 @@
     android:id="@+id/backup_activity"
     tools:context="net.rymate.notes.activities.NotesBackupActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/action_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,15 +40,14 @@
             android:paddingTop="8dp">
 
 
-            <com.devspark.robototextview.widget.RobotoTextView
+            <TextView
                 android:id="@+id/or"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="OR"
                 android:textColor="#ff000000"
-                android:textSize="16dp"
-                app:typeface="roboto_medium" />
+                android:textSize="16dp" />
 
         </LinearLayout>
 
